@@ -1,0 +1,65 @@
+common:
+    seed: &seed 2020
+    metrics:
+        name: auc
+        params: {}
+    drop:
+      - lecture_idx
+    kaggle:
+        data: False
+        notebook: False
+
+data:
+    loader:
+        train:
+            data_type: train
+            reduce: False
+    sampling: True
+    features:
+        name: custom_002
+        cat_features:
+        oof:
+            name:
+    target:
+        name: &target_name answered_correctly
+        convert_type:
+        reconvert_type:
+    adversarial_validation: False
+
+validation:
+    name: KFold
+    params:
+        n_splits: 5
+        shuffle: True
+        random_state: *seed
+    split:
+        y: *target_name
+        groups:
+    weight: average
+    single: False
+
+model:
+    name: lightgbm
+    task_type: binary
+    params:
+        boosting_type: gbdt
+        objective: binary
+        metric: auc
+        learning_rate: 0.3
+        # num_leaves: 32
+        # min_child_samples: 20
+        # feature_fraction: 0.8
+        # bagging_fraction: 0.8
+        # bagging_freq: 1
+        # bagging_seed: 11
+        max_bin: 511
+        verbose: -1
+        nthread: -1
+        seed: *seed
+        first_metric_only: True
+    num_boost_round: 2_000
+    verbose_eval: 20
+    early_stopping_rounds: 100
+    feval:
+    fobj:
+    imp_type: gain

@@ -1,0 +1,8 @@
+features:
+  - content_id
+  - content_type_id
+  - prior_question_elapsed_time
+  - prior_question_had_explanation
+  - task_container_id
+  - timestamp
+  - user_id

@@ -1,0 +1,15 @@
+features:
+  - answered_correctly_avg_u
+  - answered_correctly_sum_u
+  - attempt_c
+  - content_id
+  - content_type_id
+  - count_u
+  - equal_prior_question_flag
+  - prior_question_elapsed_time
+  - prior_question_had_explanation
+  - task_container_id
+  - timestamp
+  - user_id
+  - te_content_id_by_answered_correctly
+  - part
