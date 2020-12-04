@@ -36,7 +36,7 @@ def main():
     valid_row_id = cv1_valid['row_id']
     valid_cv1_idx = train_df[train_df['row_id'].isin(valid_row_id)].index.values
 
-    np.save('../pickle/cv1_valid.npy', valid_cv1_idx)
+    np.save('../data/processed/cv1_valid.npy', valid_cv1_idx)
 
 
 if __name__ == '__main__':

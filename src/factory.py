@@ -132,7 +132,7 @@ def get_target(cfg):
 def get_drop_idx(cfg):
     drop_idx_list = []
     for drop_name in cfg:
-        drop_idx = np.load(f'../pickle/{drop_name}.npy')
+        drop_idx = np.load(f'../data/processed/{drop_name}.npy')
         drop_idx_list.append(drop_idx)
     all_drop_idx = np.unique(np.concatenate(drop_idx_list))
     return all_drop_idx
