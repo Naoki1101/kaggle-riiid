@@ -16,6 +16,11 @@ features:
 - part
 - prior_question_elapsed_time
 - prior_question_had_explanation
+- tag_w2v_max
+- tag_w2v_mean
+- tag_w2v_median
+- tag_w2v_min
+- tag_w2v_std
 - task_container_id
 - te_content_id_by_answered_correctly
 - te_part_by_answered_correctly
