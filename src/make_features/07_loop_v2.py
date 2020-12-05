@@ -2,30 +2,38 @@ import sys
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from sklearn.cluster import KMeans
+from cuml.cluster import KMeans
 
 sys.path.append('../src')
 import const
 from feature_utils import save_features
 
+N_CLUSTERS = 1_000
+
 
 def create_content_class(df):
-    tsne0 = pd.read_feather('../features/content_id_tsne_0_train.feather').values
-    tsne1 = pd.read_feather('../features/content_id_tsne_1_train.feather').values
-    tsne = np.concatenate([tsne0, tsne1], axis=1)
+    dfs = []
+    for i in range(2):
+        tsne_df = pd.read_feather(f'../features/content_id_tsne_{i}_train.feather')
+        tsne_df[f'content_id_tsne_{i}'].fillna(-100, inplace=True)
+        tsne_df[f'content_id_tsne_{i}'] = (tsne_df[f'content_id_tsne_{i}'] - tsne_df[f'content_id_tsne_{i}'].mean()) / tsne_df[f'content_id_tsne_{i}'].std()
+        dfs.append(tsne_df)
 
-    pred = KMeans(n_clusters=1_000).fit_predict(tsne)
+    tsne_array = pd.concat(dfs, axis=1).values
+    pred = KMeans(n_clusters=N_CLUSTERS).fit_predict(tsne_array)
+
+    df[f'content_id_class{N_CLUSTERS}'] = pred
+
+    return df
 
 
-def add_user_feats(df, answered_correctly_sum_u_dict, count_u_dict, prior_q_dict, attempt_c_dict):
-    acsu = np.zeros(len(df), dtype=np.int32)
-    cu = np.zeros(len(df), dtype=np.int32)
+def add_user_feats(df, prior_q_dict, attempt_c_dict, attempt_cc_dict):
     pcf = np.zeros(len(df), dtype=np.int32)
     ac = np.zeros(len(df), dtype=np.int32)
 
-    for cnt, row in enumerate(tqdm(df[['user_id', 'content_id', 'answered_correctly']].values)):
-        acsu[cnt] = answered_correctly_sum_u_dict.setdefault(row[0], 0)
-        cu[cnt] = count_u_dict.setdefault(row[0], 0)
+    df = create_content_class(df)
+
+    for cnt, row in enumerate(tqdm(df[['user_id', f'content_id_class{N_CLUSTERS}', 'answered_correctly']].values)):
         if row[1] == prior_q_dict.setdefault(row[0], -1):
             pcf[cnt] = 1
         else:
@@ -33,18 +41,14 @@ def add_user_feats(df, answered_correctly_sum_u_dict, count_u_dict, prior_q_dict
 
         ac[cnt] = attempt_c_dict.setdefault(row[0], {}).setdefault(row[1], 1)
 
-        answered_correctly_sum_u_dict[row[0]] += row[2]
         prior_q_dict[row[0]] = row[1]
-        count_u_dict[row[0]] += 1
         attempt_c_dict[row[0]][row[1]] += 1
 
     user_feats_df = pd.DataFrame({
-        'answered_correctly_sum_u': acsu,
-        'count_u': cu,
-        'equal_prior_question_flag': pcf,
-        'attempt_c': ac
+        f'equal_prior_question_flag_class{N_CLUSTERS}': pcf,
+        f'attempt_c_class{N_CLUSTERS}': ac
     })
-    user_feats_df['answered_correctly_avg_u'] = user_feats_df['answered_correctly_sum_u'] / user_feats_df['count_u']
+    user_feats_df.columns = [f'{col}_class{N_CLUSTERS}' for col in user_feats_df.columns]
 
     return user_feats_df
 
@@ -56,8 +60,9 @@ def get_features(df):
     count_u_dict = {}
     prior_q_dict = {}
     attempt_c_dict = {}
+    attempt_cc_dict = {}
 
-    features_df = add_user_feats(df, answered_correctly_sum_u_dict, count_u_dict, prior_q_dict, attempt_c_dict)
+    features_df = add_user_feats(df, answered_correctly_sum_u_dict, count_u_dict, prior_q_dict, attempt_c_dict, attempt_cc_dict)
 
     return features_df
 
