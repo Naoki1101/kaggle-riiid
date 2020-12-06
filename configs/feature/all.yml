@@ -31,6 +31,7 @@ features:
 - tag_w2v_min
 - tag_w2v_std
 - task_container_id
+- te_content_id_and_attempt_c_by_answered_correctly
 - te_content_id_by_answered_correctly
 - te_part_by_answered_correctly
 - te_tag_by_answered_correctly
