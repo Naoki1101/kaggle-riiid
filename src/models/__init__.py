@@ -1,2 +1,2 @@
-from .lightgbm import *
-from .catboost import *
+from .table.lightgbm import *
+from .table.catboost import *

@@ -13,10 +13,10 @@ data:
     loader:
         train:
             data_type: train
-            reduce: False
+            reduce: True
     sampling: True
     features:
-        name: custom_005
+        name: custom_006
         cat_features:
         oof:
             name:
@@ -33,7 +33,7 @@ model:
         loss_function: Logloss
         eval_metric: AUC
         learning_rate: 0.3
-        iterations: 100
+        iterations: 10_000
         depth: 10
         random_seed: *seed
         task_type: GPU

@@ -15,6 +15,15 @@ features:
 - equal_prior_question_flag_class1000
 - part
 - prior_question_elapsed_time
+- prior_question_elapsed_time_div_mean_by_content_id_bin
+- prior_question_elapsed_time_div_mean_by_user_id_and_part
+- prior_question_elapsed_time_div_median_by_content_id_bin
+- prior_question_elapsed_time_div_median_by_user_id_and_part
+- prior_question_elapsed_time_max
+- prior_question_elapsed_time_mean
+- prior_question_elapsed_time_median
+- prior_question_elapsed_time_min
+- prior_question_elapsed_time_std
 - prior_question_had_explanation
 - tag_w2v_max
 - tag_w2v_mean

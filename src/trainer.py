@@ -11,6 +11,8 @@ from pathlib import Path
 from fastprogress import master_bar, progress_bar
 import torch
 from torch.autograd import detect_anomaly
+import warnings
+warnings.filterwarnings('ignore')
 
 sys.path.append('../src')
 import factory
@@ -112,19 +114,21 @@ class NNTrainer:
         self.oof = None
         self.raw_preds = None
 
-    def train(self, train_df, target_df):
-        oof = np.zeros((len(train_df), self.cfg.model.n_classes))
+    def train(self, current_array, history_array, target_df):
+        oof = np.zeros((len(target_df), self.cfg.model.n_classes))
         cv = 0
 
         for fold_, col in enumerate(self.fold_df.columns):
             print(f'\n========================== FOLD {fold_ + 1} / {self.n_splits} ... ==========================\n')
             logging.debug(f'\n========================== FOLD {fold_ + 1} / {self.n_splits} ... ==========================\n')
 
-            trn_x, val_x = train_df[self.fold_df[col] == 0], train_df[self.fold_df[col] > 0]
-            val_y = target_df[self.fold_df[col] > 0].values
+            trn_idx, val_idx = self.fold_df[self.fold_df[col] == 0].index, self.fold_df[self.fold_df[col] > 0].index
+            trn_current, val_current = current_array[trn_idx], current_array[val_idx]
+            trn_history, val_history = history_array[trn_idx], history_array[val_idx]
+            trn_y, val_y = target_df[trn_idx].values, target_df[val_idx].values
 
-            train_loader = factory.get_dataloader(trn_x, self.cfg.data.train)
-            valid_loader = factory.get_dataloader(val_x, self.cfg.data.valid)
+            train_loader = factory.get_dataloader(trn_current, trn_history, trn_y, self.cfg.data.train)
+            valid_loader = factory.get_dataloader(val_current, val_history, val_y, self.cfg.data.valid)
 
             model = factory.get_nn_model(self.cfg).to(device)
 
@@ -133,7 +137,7 @@ class NNTrainer:
             scheduler = factory.get_scheduler(self.cfg, optimizer)
 
             best_epoch = -1
-            best_val_score = np.inf
+            best_val_score = -np.inf
             mb = master_bar(range(self.cfg.model.epochs))
 
             train_loss_list = []
@@ -163,7 +167,7 @@ class NNTrainer:
                 mb.write(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.6f}  avg_val_loss: {avg_val_loss:.6f} val_score: {val_score:.6f} time: {elapsed:.0f}s')
                 logging.debug(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.6f}  avg_val_loss: {avg_val_loss:.6f} val_score: {val_score:.6f} time: {elapsed:.0f}s')
 
-                if val_score < best_val_score:
+                if val_score > best_val_score:
                     best_epoch = epoch + 1
                     best_val_score = val_score
                     best_valid_preds = valid_preds
@@ -172,7 +176,7 @@ class NNTrainer:
                     else:
                         best_model = model.state_dict()
 
-            oof[val_x.index, :] = best_valid_preds
+            oof[val_idx, :] = best_valid_preds
             cv += best_val_score * self.fold_df[col].max()
 
             torch.save(best_model, f'../logs/{self.run_name}/weight_best_{fold_}.pt')
@@ -226,6 +230,7 @@ class NNTrainer:
 
             preds = model(feats)
             loss = criterion(preds, targets)
+            print(loss.item())
 
             optimizer.zero_grad()
             loss.backward()
@@ -251,9 +256,8 @@ class NNTrainer:
                 targets = targets.to(device)
 
                 preds = model(feats)
-                preds = preds
-
                 loss = criterion(preds, targets)
+
                 valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size, :] = preds.sigmoid().cpu().detach().numpy()
                 avg_val_loss += loss.item() / len(valid_loader)
 

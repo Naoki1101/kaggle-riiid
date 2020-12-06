@@ -13,4 +13,11 @@ cd ../src
 # python train.py -m 'catboost_003' -c 'custom_003, depth=7'
 # python train.py -m 'catboost_004' -c 'custom_003, depth=10'
 # python train.py -m 'catboost_005' -c 'custom_004, depth=10'
-python train.py -m 'catboost_006' -c 'custom_005'
+# python train.py -m 'catboost_006' -c 'custom_005'
+python train.py -m 'catboost_007' -c 'custom_006'
+
+
+# ======================================================
+# NN
+# ======================================================
+# python train_nn.py -m 'transformer_001' -c 'test'   # ERROR

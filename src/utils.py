@@ -385,15 +385,22 @@ class Notificator:
 
 
 class Git:
-    def __init__(self):
+    def __init__(self, run_name):
         os.chdir('../')
         self.repo = git.Repo()
+        self.run_name = run_name
 
-    def push(self, comment):
+    def push(self):
         self.repo.git.add('.')
-        self.repo.git.commit('-m', f'{comment}')
+        self.repo.git.commit('-m', f'{self.run_name}')
         origin = self.repo.remote(name='origin')
         origin.push()
+
+    def save_hash(self):
+        sha = self.repo.head.object.hexsha
+
+        with open(f'../logs/{self.run_name}/commit_hash.txt', 'w') as f:
+            f.write(sha)
 
 
 def transfar_dropbox(input_path, output_path, token):

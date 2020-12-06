@@ -1,3 +1,4 @@
+import gc
 import argparse
 import datetime
 import logging
@@ -6,9 +7,9 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-import const
 import factory
-from trainer import Trainer
+import const
+from trainer import NNTrainer
 from utils import (DataHandler, Notificator, Timer, seed_everything,
                    Git, Kaggle)
 
@@ -30,16 +31,10 @@ cfg.update(dh.load(f'../configs/exp/{options.model}.yml'))
 
 notify_params = dh.load(options.notify)
 
-features_params = dh.load(f'../configs/feature/{cfg.data.features.name}.yml')
-features = features_params.features
-
 comment = options.comment
 model_name = options.model
 now = datetime.datetime.now()
-if cfg.model.task_type != 'optuna':
-    run_name = f'{model_name}_{now:%Y%m%d%H%M%S}'
-else:
-    run_name = f'{model_name}_optuna_{now:%Y%m%d%H%M%S}'
+run_name = f'{model_name}_{now:%Y%m%d%H%M%S}'
 
 logger_path = Path(f'../logs/{run_name}')
 
@@ -55,43 +50,47 @@ def main():
     logging.basicConfig(filename=logger_path / 'train.log', level=logging.DEBUG)
 
     dh.save(logger_path / 'config.yml', cfg)
-    dh.save(logger_path / 'features.yml', features_params)
 
     with t.timer('load data'):
-        train_x = factory.get_features(features, cfg.data.loader.train)
-        train_y = factory.get_target(cfg.data.target)
+        target_df = pd.read_feather(f'../features/{const.TARGET_COLS[0]}.feather')
+        current = np.load('../data/processed/current_feats.npy')
+        history = np.load('../data/processed/history_feats.npy')
 
-    with t.timer('add oof'):
-        if cfg.data.features.oof.name is not None:
-            oof, preds = factory.get_result(cfg.data.features.oof.name, cfg)
-
-            for i in range(oof.shape[1]):
-                oof_col_name = f'oof_{const.TARGET_COLS[i]}'
-                train_x[oof_col_name] = oof[:, i]
-                features.append(oof_col_name)
+        history = np.round(history, 3)
 
     with t.timer('make folds'):
         valid_idx = np.load('../data/processed/cv1_valid.npy')
 
-        fold_df = pd.DataFrame(index=range(len(train_x)))
+        fold_df = pd.DataFrame(index=range(len(target_df)))
         fold_df['fold_0'] = 0
         fold_df.loc[valid_idx, 'fold_0'] += 1
 
     with t.timer('drop index'):
         if cfg.common.drop is not None:
             drop_idx = factory.get_drop_idx(cfg.common.drop)
-            train_x = train_x.drop(drop_idx, axis=0).reset_index(drop=True)
-            train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True)
+            current = np.delete(current, drop_idx, axis=0)
+            history = np.delete(history, drop_idx, axis=0)
+            target_df = target_df.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
-    with t.timer('train and predict'):
-        trainer = Trainer(cfg)
-        cv = trainer.train(train_df=train_x,
-                           target_df=train_y,
-                           fold_df=fold_df)
-        trainer.save(run_name)
+        if cfg.common.debug:
+            trn_idx = np.random.choice(fold_df[fold_df['fold_0'] == 0].index.values, 2_000)
+            val_idx = np.random.choice(fold_df[fold_df['fold_0'] == 1].index.values, 500)
+            debug_idx = np.concatenate([trn_idx, val_idx])
 
-        run_name_cv = f'{run_name}_{cv:.3f}'
+            current = current[debug_idx]
+            history = history[debug_idx]
+            target_df = target_df.iloc[debug_idx].reset_index(drop=True)
+            fold_df = fold_df.iloc[debug_idx].reset_index(drop=True)
+
+        print(target_df['answered_correctly'].value_counts())
+
+    with t.timer('train model'):
+        trainer = NNTrainer(run_name, fold_df, cfg)
+        cv = trainer.train(current, history, target_df=target_df[const.TARGET_COLS[0]])
+        trainer.save()
+
+        run_name_cv = f'{run_name}_{cv:.4f}'
         logger_path.rename(f'../logs/{run_name_cv}')
         logging.disable(logging.FATAL)
 

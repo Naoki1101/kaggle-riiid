@@ -2,9 +2,9 @@ import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
-# import torch
-# import torch.nn as nn
-# from torch.utils.data import DataLoader
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
 
 sys.path.append('../src')
 import loss
@@ -13,8 +13,8 @@ import models
 import metrics
 import validation
 from utils import reduce_mem_usage, DataHandler
-# from dataset import custom_dataset
-# from models.nn.custom_model import CustomModel
+from dataset import custom_dataset
+from models.nn.custom_model import CustomModel
 
 dh = DataHandler()
 
@@ -168,43 +168,43 @@ def get_lgb_feval(cfg):
     return feval
 
 
-# def get_nn_model(cfg, is_train=True):
-#     model = CustomModel(cfg)
+def get_nn_model(cfg, is_train=True):
+    model = CustomModel(cfg)
 
-#     if cfg.model.multi_gpu and is_train:
-#         model = nn.DataParallel(model)
+    if cfg.model.multi_gpu and is_train:
+        model = nn.DataParallel(model)
 
-#     return model
-
-
-# def get_loss(cfg):
-#     if hasattr(nn, cfg.loss.name):
-#         loss_ = getattr(nn, cfg.loss.name)(**cfg.loss.params)
-#     elif hasattr(loss, cfg.loss.name):
-#         loss_ = getattr(loss, cfg.loss.name)(**cfg.loss.params)
-#     return loss_
+    return model
 
 
-# def get_dataloader(df, cfg):
-#     dataset = getattr(custom_dataset, cfg.dataset_type)(df, cfg)
-#     loader = DataLoader(dataset, **cfg.loader)
-#     return loader
+def get_loss(cfg):
+    if hasattr(nn, cfg.loss.name):
+        loss_ = getattr(nn, cfg.loss.name)(**cfg.loss.params)
+    elif hasattr(loss, cfg.loss.name):
+        loss_ = getattr(loss, cfg.loss.name)(**cfg.loss.params)
+    return loss_
 
 
-# def get_optim(cfg, parameters):
-#     optim = getattr(torch.optim, cfg.optimizer.name)(params=parameters, **cfg.optimizer.params)
-#     return optim
+def get_dataloader(current, history, target_df, cfg):
+    dataset = getattr(custom_dataset, cfg.dataset_type)(current, history, target_df, cfg)
+    loader = DataLoader(dataset, **cfg.loader)
+    return loader
 
 
-# def get_scheduler(cfg, optimizer):
-#     if cfg.scheduler.name == 'ReduceLROnPlateau':
-#         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-#             optimizer,
-#             **cfg.scheduler.params,
-#         )
-#     else:
-#         scheduler = getattr(torch.optim.lr_scheduler, cfg.scheduler.name)(
-#             optimizer,
-#             **cfg.scheduler.params,
-#         )
-#     return scheduler
+def get_optim(cfg, parameters):
+    optim = getattr(torch.optim, cfg.optimizer.name)(params=parameters, **cfg.optimizer.params)
+    return optim
+
+
+def get_scheduler(cfg, optimizer):
+    if cfg.scheduler.name == 'ReduceLROnPlateau':
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            **cfg.scheduler.params,
+        )
+    else:
+        scheduler = getattr(torch.optim.lr_scheduler, cfg.scheduler.name)(
+            optimizer,
+            **cfg.scheduler.params,
+        )
+    return scheduler
