@@ -80,8 +80,8 @@ def main():
     with t.timer('drop index'):
         if cfg.common.drop is not None:
             drop_idx = factory.get_drop_idx(cfg.common.drop)
-            train_x = train_x.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:10_000_000]
-            train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:10_000_000]
+            train_x = train_x.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:5_000_000]
+            train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:5_000_000]
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
     with t.timer('train and predict'):
