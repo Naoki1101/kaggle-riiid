@@ -399,7 +399,7 @@ class Git:
     def save_hash(self):
         sha = self.repo.head.object.hexsha
 
-        with open(f'../logs/{self.run_name}/commit_hash.txt', 'w') as f:
+        with open(f'./logs/{self.run_name}/commit_hash.txt', 'w') as f:
             f.write(sha)
 
 

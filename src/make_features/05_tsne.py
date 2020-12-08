@@ -4,9 +4,11 @@ from cuml.manifold import TSNE
 
 sys.path.append('../src')
 import const
+from utils import DataHandler
 from feature_utils import save_features, get_sparse_matrix
 
 N_COMP = 2
+dh = DataHandler()
 
 
 def get_features(df):
@@ -26,8 +28,9 @@ def get_features(df):
     for i in range(N_COMP):
         tsne_df[f'content_id_tsne_{i}'] = tsne_array[:, i]
         le = dict(tsne_df[['content_id', f'content_id_tsne_{i}']].values)
-
         features_df[f'content_id_tsne_{i}'] = df['content_id'].map(le)
+
+        dh.save(f'../data/processed/tsne_encoder_{i}.pkl', le)
 
     return features_df
 

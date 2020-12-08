@@ -36,7 +36,7 @@ def get_features(df):
     for col in ['content_id', 'tag', 'part', 'content_id_and_attempt_c']:
         te = TargetEncoding(fold_df)
         features_df[f'te_{col}_by_answered_correctly'] = te.fit_transform(df[col], df['answered_correctly'])
-        dh.save(f'../data/pickle/te_{col}_by_answered_correctly.pkl', te.encoder)
+        dh.save(f'../data/processed/te_{col}_by_answered_correctly.pkl', te.encoder)
 
     return features_df
 
