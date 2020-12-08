@@ -12,7 +12,9 @@ windows = [3, 5, 7]
 def get_features(df):
     features_df = pd.DataFrame()
 
-    features_df['answered_correctly_rolling5'] = np.zeros(len(df))
+    for w in windows:
+        features_df[f'answered_correctly_rolling{w}'] = np.zeros(len(df))
+
     for user_id, user_df in df.groupby('user_id'):
         user_idx = user_df.index
 

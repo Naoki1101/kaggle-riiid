@@ -1,7 +1,9 @@
 features:
 - answered_correctly_avg_u
 - answered_correctly_avg_u_class1000
+- answered_correctly_rolling3
 - answered_correctly_rolling5
+- answered_correctly_rolling7
 - answered_correctly_sum_u
 - answered_correctly_sum_u_class1000
 - attempt_c
