@@ -20,7 +20,8 @@ cd ../src
 # python train.py -m 'catboost_010' -c 'custom_009'
 # python train.py -m 'catboost_011' -c 'custom_010'
 # python train.py -m 'catboost_012' -c 'custom_011'
-python train.py -m 'catboost_013' -c 'custom_012'
+# python train.py -m 'catboost_013' -c 'custom_012'
+python train.py -m 'catboost_014' -c 'custom_013'
 
 
 # ======================================================
