@@ -40,4 +40,5 @@ features:
 - te_tag_by_answered_correctly
 - te_type_of_by_answered_correctly
 - timestamp
+- timestamp_diff1
 - user_id

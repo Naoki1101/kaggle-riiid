@@ -80,8 +80,8 @@ def main():
     with t.timer('drop index'):
         if cfg.common.drop is not None:
             drop_idx = factory.get_drop_idx(cfg.common.drop)
-            train_x = train_x.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:20_000_000]
-            train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True).iloc[:20_000_000]
+            train_x = train_x.drop(drop_idx, axis=0).reset_index(drop=True)
+            train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
     with t.timer('train and predict'):
@@ -112,7 +112,7 @@ def main():
                                   params=notify_params)
         notificator.send_line()
         notificator.send_notion()
-        notificator.send_slack()
+        # notificator.send_slack()
 
     with t.timer('git'):
         git = Git(run_name=run_name_cv)
