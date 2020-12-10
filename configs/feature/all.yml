@@ -2,8 +2,11 @@ features:
 - answered_correctly_avg_u
 - answered_correctly_avg_u_class1000
 - answered_correctly_rolling3
+- answered_correctly_rolling3_div_elapsed_from_prior
 - answered_correctly_rolling5
+- answered_correctly_rolling5_div_elapsed_from_prior
 - answered_correctly_rolling7
+- answered_correctly_rolling7_div_elapsed_from_prior
 - answered_correctly_sum_u
 - answered_correctly_sum_u_class1000
 - attempt_c
