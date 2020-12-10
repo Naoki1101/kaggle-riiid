@@ -44,4 +44,8 @@ features:
 - te_type_of_by_answered_correctly
 - timestamp
 - timestamp_diff1
+- timestamp_diff2
+- timestamp_diff3
+- timestamp_diff4
+- timestamp_diff5
 - user_id

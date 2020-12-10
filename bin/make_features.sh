@@ -11,8 +11,8 @@ cd ../src
 # python make_features/07_loop_v2.py
 # python make_features/08_aggs.py
 # python make_features/09_rolling.py
-# python make_features/10_time.py
-python make_features/11_rolling_with_time.py
+python make_features/10_lag.py
+# python make_features/11_rolling_with_time.py
 
 # python make_features/91_transformer_current_feats.py
 # python make_features/92_transformer_history_feats.py

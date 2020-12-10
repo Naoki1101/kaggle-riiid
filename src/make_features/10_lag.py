@@ -1,23 +1,28 @@
 import sys
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 sys.path.append('../src')
 import const
 from feature_utils import save_features
 
-lag_list = [1]
+lags = [1, 2, 3, 4, 5]
 
 
 def get_features(df):
     features_df = pd.DataFrame()
 
-    features_df[f'timestamp_diff1'] = np.zeros(len(df))
+    for lag in lags:
+        features_df[f'timestamp_diff{lag}'] = np.zeros(len(df))
 
-    for user_id, user_df in df.groupby('user_id'):
+    user_gp = df.groupby('user_id')
+
+    for user_id, user_df in tqdm(user_gp, total=len(user_gp)):
         user_idx = user_df.index
 
-        features_df.loc[user_idx, f'timestamp_diff1'] += user_df['timestamp'].diff()
+        for lag in lags:
+            features_df.loc[user_idx, f'timestamp_diff{lag}'] += user_df['timestamp'].diff(lag)
 
     return features_df
 
