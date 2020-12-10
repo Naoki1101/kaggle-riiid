@@ -31,6 +31,9 @@ features:
 - prior_question_elapsed_time_min
 - prior_question_elapsed_time_std
 - prior_question_had_explanation
+- seq2dec_w3
+- seq2dec_w5
+- seq2dec_w7
 - tag_w2v_max
 - tag_w2v_mean
 - tag_w2v_median
@@ -58,4 +61,7 @@ features:
 - timestamp_diff4
 - timestamp_diff4_div_timestamp_diff5
 - timestamp_diff5
+- timestamp_lag_diff_mean_each_user
+- timestamp_lag_div_mean_each_user
+- timestamp_lag_mean
 - user_id

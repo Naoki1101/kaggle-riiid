@@ -25,7 +25,8 @@ cd ../src
 # python train.py -m 'catboost_015' -c 'custom_014'
 # python train.py -m 'catboost_016' -c 'custom_015'
 # python train.py -m 'catboost_017' -c 'custom_015, myaun params'
-python train.py -m 'catboost_018' -c 'custom_016'
+# python train.py -m 'catboost_018' -c 'custom_016'
+python train.py -m 'catboost_019' -c 'custom_017'
 
 
 # ======================================================

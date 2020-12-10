@@ -26,7 +26,6 @@ def get_features(df):
             for lag in range(1, window):
                 seq2dec_feats += user_df['answered_correctly'].shift(lag + 1) * (10 ** -lag)
 
-            print(seq2dec_feats)
             features_df.loc[user_idx, f'seq2dec_w{window}'] = seq2dec_feats
 
     return features_df
