@@ -25,9 +25,13 @@ def get_features(df):
 
         lag_feats = user_df['timestamp'].diff()
 
-        features_df.loc[user_idx, 'timestamp_lag_mean'] = np.mean(lag_feats)
-        features_df.loc[user_idx, 'timestamp_lag_diff_mean_each_user'] = lag_feats - np.mean(lag_feats)
-        features_df.loc[user_idx, 'timestamp_lag_div_mean_each_user'] = lag_feats / (np.mean(lag_feats) + s)
+        features_df.loc[user_idx, 'timestamp_lag_mean'] = lag_feats.mean()
+        features_df.loc[user_idx, 'timestamp_lag_diff_mean_each_user'] = lag_feats - lag_feats.mean()
+        features_df.loc[user_idx, 'timestamp_lag_div_mean_each_user'] = lag_feats / (lag_feats.mean() + s)
+
+        features_df.loc[user_idx, 'timestamp_lag_median'] = lag_feats.median()
+        features_df.loc[user_idx, 'timestamp_lag_diff_median_each_user'] = lag_feats - lag_feats.median()
+        features_df.loc[user_idx, 'timestamp_lag_div_median_each_user'] = lag_feats / (lag_feats.median() + s)
 
     return features_df
 

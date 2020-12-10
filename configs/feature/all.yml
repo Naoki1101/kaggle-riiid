@@ -62,6 +62,9 @@ features:
 - timestamp_diff4_div_timestamp_diff5
 - timestamp_diff5
 - timestamp_lag_diff_mean_each_user
+- timestamp_lag_diff_median_each_user
 - timestamp_lag_div_mean_each_user
+- timestamp_lag_div_median_each_user
 - timestamp_lag_mean
+- timestamp_lag_median
 - user_id
