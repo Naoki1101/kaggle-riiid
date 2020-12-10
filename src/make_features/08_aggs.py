@@ -29,6 +29,9 @@ def get_features(df):
         features_df[f'{col}_div_mean_by_{key_col}'] = df[col] / (agg_df[f'{col}_mean'] + s)
         features_df[f'{col}_div_median_by_{key_col}'] = df[col] / (agg_df[f'{col}_median'] + s)
 
+        features_df[f'{col}_diff_mean_by_{key_col}'] = df[col] - agg_df[f'{col}_mean']
+        features_df[f'{col}_diff_median_by_{key_col}'] = df[col] - agg_df[f'{col}_median']
+
     return features_df
 
 

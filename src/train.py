@@ -84,6 +84,12 @@ def main():
             train_y = train_y.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
+        if cfg.data.sampling:
+            drop_rows = np.random.choice(fold_df[fold_df['fold_0'] == 0].index.values, 20_000_000)
+            train_x = train_x.drop(drop_rows, axis=0).reset_index(drop=True)
+            train_y = train_y.drop(drop_rows, axis=0).reset_index(drop=True)
+            fold_df = fold_df.drop(drop_rows, axis=0).reset_index(drop=True)
+
     with t.timer('train and predict'):
         trainer = Trainer(cfg)
         cv = trainer.train(train_df=train_x,
