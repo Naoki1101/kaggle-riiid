@@ -13,8 +13,8 @@ windows = [3, 5, 7]
 def get_features(df):
     features_df = pd.DataFrame()
 
-    for w in windows:
-        features_df[f'seq2dec_w{w}'] = np.zeros(len(df))
+    for window in windows:
+        features_df[f'seq2dec_w{window}'] = np.zeros(len(df))
 
     user_gp = df[['user_id', 'answered_correctly']].groupby('user_id')
 

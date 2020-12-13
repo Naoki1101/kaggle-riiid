@@ -6,6 +6,7 @@ from gensim.models import word2vec
 
 sys.path.append('../src')
 import const
+from utils import DataHandler
 from feature_utils import save_features
 
 w2v_params = {
@@ -16,6 +17,8 @@ w2v_params = {
     "min_count": 1,
     "workers": -1
 }
+
+dh = DataHandler()
 
 
 def get_features(df, question_df):
@@ -55,6 +58,8 @@ def get_features(df, question_df):
         for col in aggs:
             le = dict(agg_df[col])
             features_df[f'tag_w2v_{col}'] = df['content_id'].map(le)
+
+            dh.save(f'../data/processed/tag_w2v_{col}_encoder.pkl', le)
 
     return features_df
 

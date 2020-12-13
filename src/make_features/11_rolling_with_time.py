@@ -24,6 +24,7 @@ def get_features(df):
         for w in windows:
             rolling_feats = (user_df['answered_correctly'].rolling(window=w + 1).sum()
                              - user_df['answered_correctly']) / w
+
             time_diff = user_df['timestamp'].diff()
 
             features_df.loc[user_idx, f'answered_correctly_rolling{w}_div_elapsed_from_prior'] += rolling_feats / np.log1p(time_diff)
