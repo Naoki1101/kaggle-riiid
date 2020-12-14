@@ -65,6 +65,8 @@ features:
 - task_container_id
 - te_content_id_and_attempt_c_by_answered_correctly
 - te_content_id_by_answered_correctly
+- te_content_id_next_by_answered_correctly
+- te_content_id_prior_by_answered_correctly
 - te_part_by_answered_correctly
 - te_tag_by_answered_correctly
 - te_type_of_by_answered_correctly
