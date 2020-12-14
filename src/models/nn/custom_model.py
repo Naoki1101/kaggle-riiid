@@ -9,7 +9,7 @@ from . import transformer
 sys.path.append('../src')
 
 model_encoder = {
-    'transformer_v1': transformer.TransformerV1
+    'transformer_public': transformer.SAKTModel
 }
 
 
@@ -46,5 +46,5 @@ class CustomModel(nn.Module):
         self.model = replace_fc(self.base_model, cfg)
 
     def forward(self, x):
-        x = self.model(x)
-        return x
+        x, w = self.model(x)
+        return x, w

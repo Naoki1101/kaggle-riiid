@@ -29,10 +29,10 @@ cd ../src
 # python train.py -m 'catboost_019' -c 'custom_017'
 # python train.py -m 'catboost_020' -c 'custom_018'
 # python train.py -m 'catboost_021' -c 'custom_018'
-python train.py -m 'catboost_022' -c 'custom_019'
+# python train.py -m 'catboost_022' -c 'custom_019'
 
 
 # ======================================================
 # NN
 # ======================================================
-# python train_nn.py -m 'transformer_001' -c 'test'   # ERROR
+python train_nn.py -m 'transformer_001' -c 'test'

@@ -52,42 +52,31 @@ def main():
     dh.save(logger_path / 'config.yml', cfg)
 
     with t.timer('load data'):
-        target_df = pd.read_feather(f'../features/{const.TARGET_COLS[0]}.feather')
-        current = np.load('../data/processed/current_feats.npy')
-        history = np.load('../data/processed/history_feats.npy')
-
-        history = np.round(history, 3)
+        if cfg.common.debug:
+            train_df = pd.read_csv('../data/input/train.csv', dtype=const.DTYPE, nrows=10**6)
+        else:
+            train_df = pd.read_csv('../data/input/train.csv', dtype=const.DTYPE)
 
     with t.timer('make folds'):
         valid_idx = np.load('../data/processed/cv1_valid.npy')
+        if cfg.common.debug:
+            valid_idx = valid_idx[np.where(valid_idx < len(train_df))]
 
-        fold_df = pd.DataFrame(index=range(len(target_df)))
+        fold_df = pd.DataFrame(index=range(len(train_df)))
         fold_df['fold_0'] = 0
         fold_df.loc[valid_idx, 'fold_0'] += 1
 
     with t.timer('drop index'):
-        if cfg.common.drop is not None:
+        if cfg.common.drop:
             drop_idx = factory.get_drop_idx(cfg.common.drop)
-            current = np.delete(current, drop_idx, axis=0)
-            history = np.delete(history, drop_idx, axis=0)
-            target_df = target_df.drop(drop_idx, axis=0).reset_index(drop=True)
+            if cfg.common.debug:
+                drop_idx = drop_idx[np.where(drop_idx < len(train_df))]
+            train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
-
-        if cfg.common.debug:
-            trn_idx = np.random.choice(fold_df[fold_df['fold_0'] == 0].index.values, 2_000)
-            val_idx = np.random.choice(fold_df[fold_df['fold_0'] == 1].index.values, 500)
-            debug_idx = np.concatenate([trn_idx, val_idx])
-
-            current = current[debug_idx]
-            history = history[debug_idx]
-            target_df = target_df.iloc[debug_idx].reset_index(drop=True)
-            fold_df = fold_df.iloc[debug_idx].reset_index(drop=True)
-
-        print(target_df['answered_correctly'].value_counts())
 
     with t.timer('train model'):
         trainer = NNTrainer(run_name, fold_df, cfg)
-        cv = trainer.train(current, history, target_df=target_df[const.TARGET_COLS[0]])
+        cv = trainer.train(train_df, target_df=train_df[const.TARGET_COLS[0]])
         trainer.save()
 
         run_name_cv = f'{run_name}_{cv:.4f}'
@@ -104,7 +93,7 @@ def main():
     with t.timer('notify'):
         process_minutes = t.get_processing_time()
         notificator = Notificator(run_name=run_name_cv,
-                                  model_name=cfg.model.name,
+                                  model_name=cfg.model.backbone,
                                   cv=round(cv, 4),
                                   process_time=round(process_minutes, 2),
                                   comment=comment,

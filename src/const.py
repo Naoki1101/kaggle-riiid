@@ -25,3 +25,6 @@ DTYPE = {
     'prior_question_elapsed_time': 'float32',
     'prior_question_had_explanation': 'boolean'
 }
+
+MAX_SEQ = 160
+NUM_CONTENT = 13_523

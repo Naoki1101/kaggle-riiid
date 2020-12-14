@@ -185,8 +185,8 @@ def get_loss(cfg):
     return loss_
 
 
-def get_dataloader(current, history, target_df, cfg):
-    dataset = getattr(custom_dataset, cfg.dataset_type)(current, history, target_df, cfg)
+def get_dataloader(samples, df, cfg):
+    dataset = getattr(custom_dataset, cfg.dataset_type)(samples, df, cfg)
     loader = DataLoader(dataset, **cfg.loader)
     return loader
 

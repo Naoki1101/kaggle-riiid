@@ -5,53 +5,53 @@ common:
         params: {}
     drop:
       - lecture_idx
-    debug: True
+    debug: False
     kaggle:
         data: False
         notebook: False
 
 model:
-    backbone: transformer_v1
+    backbone: transformer_public
     n_classes: &class 1
-    epochs: &epochs 10
+    epochs: &epochs 30
     params:
-        dim_input: 8   # historyの入力
-        dim_enc: 16   # transformerの入力
-        dim_fc: 16   # 最後の全結合層の中間
-        dim_output: 1
-        dim_cur_input: 5   # currentの次元
-        ff_inner: 10
-        ff_slope: 0.2
-        head: 4
-        dropout1: 0.20
-        dropout2: 0.20
-        dropout3: 0.20
+        n_skill: &n_skill 13_523
+        max_seq: &max_seq 120
     multi_gpu: False
     head:
 
 data:
     train:
-        dataset_type: &dataset CustomDataset
+        dataset_type: CustomTrainDataset
         is_train: True
+        params:
+            n_skill: *n_skill
+            max_seq: *max_seq
         loader:
             shuffle: True
-            batch_size: 4096
+            batch_size: 2048
             num_workers: 4
         transforms:
     valid:
-        dataset_type: *dataset
-        is_train: True
+        dataset_type: CustomTestDataset
+        is_train: False
+        params:
+            n_skill: *n_skill
+            max_seq: *max_seq
         loader:
             shuffle: False
             batch_size: 1024
             num_workers: 4
         transforms:
     test:
-        dataset_type: *dataset
+        dataset_type: CustomTestDataset
         is_train: False
+        params:
+            n_skill: *n_skill
+            max_seq: *max_seq
         loader:
             shuffle: False
-            batch_size: 4096
+            batch_size: 2048
             num_workers: 4
         transforms:
 
@@ -67,4 +67,4 @@ optimizer:
 scheduler:
     name: CosineAnnealingLR
     params:
-        T_max: 10
+        T_max: 30
