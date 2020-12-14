@@ -17,7 +17,7 @@ cd ../src
 # python make_features/12_seq2dec.py
 # python make_features/13_lag_and_agg.py
 # python make_features/14_shift_and_target_encording.py
-python make_features/15_content_diff.py
+python make_features/15_id_diff.py
 
 # python make_features/91_transformer_current_feats.py
 # python make_features/92_transformer_history_feats.py

@@ -64,6 +64,7 @@ features:
 - tag_w2v_min
 - tag_w2v_std
 - task_container_id
+- task_container_id_diff_abs
 - te_content_id_and_attempt_c_by_answered_correctly
 - te_content_id_by_answered_correctly
 - te_content_id_next_by_answered_correctly

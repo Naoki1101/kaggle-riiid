@@ -7,7 +7,6 @@ features:
   - task_container_id
   - te_content_id_by_answered_correctly
   - part
-  - te_part_by_answered_correctly
   - te_content_id_and_attempt_c_by_answered_correctly
   - content_id_tsne_0
   - content_id_tsne_1
@@ -15,9 +14,6 @@ features:
   - tag_w2v_mean
   - tag_w2v_median
   - tag_w2v_min
-  - prior_question_elapsed_time_div_mean_by_user_id_and_part
-  - prior_question_elapsed_time_div_median_by_content_id_bin
-  - prior_question_elapsed_time_div_median_by_user_id_and_part
   - prior_question_elapsed_time_mean
   - prior_question_elapsed_time_median
   - prior_question_elapsed_time_std
@@ -27,13 +23,18 @@ features:
   - timestamp_diff3
   - timestamp_diff4
   - timestamp_diff5
-  - answered_correctly_rolling3_div_elapsed_from_prior
   - seq2dec_w3
   - seq2dec_w5
   - seq2dec_w7
-  - timestamp_lag_diff_mean_each_user
-  - timestamp_lag_div_mean_each_user
-  - timestamp_lag_mean
   - timestamp_lag_diff_median_each_user
   - timestamp_lag_div_median_each_user
   - timestamp_lag_median
+  - timestamp_lag_diff_rolling3_mean_each_user
+  - timestamp_lag_diff_rolling3_median_each_user
+  - timestamp_lag_diff_rolling5_mean_each_user
+  - timestamp_lag_diff_rolling5_median_each_user
+  - timestamp_lag_diff_rolling7_mean_each_user
+  - timestamp_lag_diff_rolling7_median_each_user
+  - te_content_id_prior_by_answered_correctly
+  - content_id_diff_abs
+  - task_container_id_diff_abs

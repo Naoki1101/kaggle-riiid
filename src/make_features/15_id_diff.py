@@ -11,16 +11,19 @@ from feature_utils import save_features
 def get_features(df):
     features_df = pd.DataFrame()
 
-    user_gp = df[['user_id', 'content_id']].groupby('user_id')
+    user_gp = df[['user_id', 'content_id', 'task_container_id']].groupby('user_id')
 
     content_id_diff_array = np.zeros(len(df))
+    task_container_id_diff_array = np.zeros(len(df))
 
     for user_id, user_df in tqdm(user_gp, total=len(user_gp)):
         user_idx = user_df.index.values
 
         content_id_diff_array[user_idx] = (user_df['content_id'] - user_df['content_id'].shift(1)).abs()
+        task_container_id_diff_array[user_idx] = (user_df['task_container_id'] - user_df['task_container_id'].shift(1)).abs()
 
     features_df['content_id_diff_abs'] = content_id_diff_array
+    features_df['task_container_id_diff_abs'] = task_container_id_diff_array
 
     return features_df
 
