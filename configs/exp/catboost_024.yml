@@ -1,0 +1,49 @@
+common:
+    seed: &seed 2020
+    metrics:
+        name: auc
+        params: {}
+    drop:
+      - lecture_idx
+    kaggle:
+        data: False
+        notebook: False
+
+data:
+    loader:
+        train:
+            data_type: train
+            reduce: True
+    sampling: False
+    features:
+        name: custom_021
+        cat_features:
+        oof:
+            name:
+    target:
+        name: &target_name answered_correctly
+        convert_type:
+        reconvert_type:
+    adversarial_validation: False
+
+model:
+    name: catboost
+    task_type: binary
+    params:
+        loss_function: Logloss
+        eval_metric: AUC
+        learning_rate: 0.3
+        iterations: 10_000
+        depth: 8
+        l2_leaf_reg: 3.0
+        bagging_temperature: 0.2
+        border_count: 128
+        od_type: Iter
+        metric_period: 50
+        od_wait: 50
+        random_seed: *seed
+        task_type: GPU
+    verbose_eval: 100
+    early_stopping_rounds: 100
+    imp_type: total_gain
+    feval:

@@ -12,6 +12,7 @@ features:
 - attempt_c
 - attempt_c_class1000
 - content_id
+- content_id_diff_abs
 - content_id_tsne_0
 - content_id_tsne_1
 - content_type_id
