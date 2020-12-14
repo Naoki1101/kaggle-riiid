@@ -141,7 +141,7 @@ class NNTrainer:
             scheduler = factory.get_scheduler(self.cfg, optimizer)
 
             best_epoch = -1
-            best_val_score = np.inf
+            best_val_score = -np.inf
             mb = master_bar(range(self.cfg.model.epochs))
 
             train_loss_list = []
@@ -171,7 +171,7 @@ class NNTrainer:
                 mb.write(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.6f}  avg_val_loss: {avg_val_loss:.6f} val_score: {val_score:.6f} time: {elapsed:.0f}s')
                 logging.debug(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.6f}  avg_val_loss: {avg_val_loss:.6f} val_score: {val_score:.6f} time: {elapsed:.0f}s')
 
-                if val_score < best_val_score:
+                if val_score > best_val_score:
                     best_epoch = epoch + 1
                     best_val_score = val_score
                     best_valid_preds = valid_preds
