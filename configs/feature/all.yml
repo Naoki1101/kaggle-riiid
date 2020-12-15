@@ -20,6 +20,8 @@ features:
 - count_u_class1000
 - equal_prior_question_flag
 - equal_prior_question_flag_class1000
+- order_content_id_by_task_container_id
+- order_content_id_div_max_by_task_container_id
 - part
 - prior_question_elapsed_time
 - prior_question_elapsed_time_diff_mean_by_content_id
