@@ -102,4 +102,5 @@ features:
 - timestamp_lag_div_median_each_user
 - timestamp_lag_mean
 - timestamp_lag_median
+- timestamp_lag_shift1
 - user_id
