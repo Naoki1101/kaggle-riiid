@@ -33,7 +33,8 @@ cd ../src
 # python train.py -m 'catboost_023' -c 'custom_020'
 # python train.py -m 'catboost_024' -c 'custom_021'
 # python train.py -m 'catboost_025' -c 'custom_022'
-python train.py -m 'catboost_026' -c 'custom_023'
+# python train.py -m 'catboost_026' -c 'custom_023'
+python train.py -m 'catboost_027' -c 'custom_024'
 
 
 # ======================================================

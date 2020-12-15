@@ -61,14 +61,14 @@ def main():
         train_x = factory.get_features(features, cfg.data.loader.train)
         train_y = factory.get_target(cfg.data.target)
 
-    with t.timer('add oof'):
-        if cfg.data.features.oof.name is not None:
-            oof, preds = factory.get_result(cfg.data.features.oof.name, cfg)
+    # with t.timer('add oof'):
+    #     if cfg.data.features.oof.name is not None:
+    #         oof, preds = factory.get_result(cfg.data.features.oof.name, cfg)
 
-            for i in range(oof.shape[1]):
-                oof_col_name = f'oof_{const.TARGET_COLS[i]}'
-                train_x[oof_col_name] = oof[:, i]
-                features.append(oof_col_name)
+    #         for i in range(oof.shape[1]):
+    #             oof_col_name = f'oof_{const.TARGET_COLS[i]}'
+    #             train_x[oof_col_name] = oof[:, i]
+    #             features.append(oof_col_name)
 
     with t.timer('make folds'):
         valid_idx = np.load('../data/processed/cv1_valid.npy')

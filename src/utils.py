@@ -55,7 +55,7 @@ def seed_everything(seed=42):
     torch.backends.cudnn.deterministic = True
 
 
-def reduce_mem_usage(df):
+def reduce_mem_usage(df, show=False):
     start_mem = df.memory_usage().sum() / 1024 ** 2
     # print('Memory usage of dataframe is {:.2f} MB'.format(start_mem))
     # print("column = ", len(df.columns))
@@ -86,8 +86,9 @@ def reduce_mem_usage(df):
             continue
 
     end_mem = df.memory_usage().sum() / 1024 ** 2
-    print('Memory usage after optimization is: {:.2f} MB'.format(end_mem))
-    print('Decreased by {:.1f}%'.format(100 * (start_mem - end_mem) / start_mem))
+    if show:
+        print('Memory usage after optimization is: {:.2f} MB'.format(end_mem))
+        print('Decreased by {:.1f}%'.format(100 * (start_mem - end_mem) / start_mem))
     return df
 
 

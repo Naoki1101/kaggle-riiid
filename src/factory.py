@@ -78,48 +78,37 @@ def get_features(features, cfg):
             feat = dh.load(f_path)
 
         elif log_dir.exists():
-            if cfg.data_type == 'train':
-                feat = dh.load(log_dir / 'oof.npy')
-                model_cfg = dh.load(log_dir / 'config.yml')
-
-                if model_cfg.common.drop:
-                    drop_name_list = []
-                    for drop_name in model_cfg.common.drop:
-                        drop_name_list.append(drop_name)
-
-                    drop_idxs = get_drop_idx(drop_name_list)
-                    feat = fill_dropped(feat, drop_idxs)
-
-            elif cfg.data_type == 'test':
-                feat = dh.load(log_dir / 'raw_preds.npy')
-
+            feat = get_result(log_dir, cfg)
             feat = pd.DataFrame(feat, columns=[f])
 
+        if cfg.reduce:
+            df = reduce_mem_usage(feat)
         dfs.append(feat)
 
     df = pd.concat(dfs, axis=1)
-    if cfg.reduce:
-        df = reduce_mem_usage(df)
+
     return df
 
 
-def get_result(log_name, cfg):
-    log_dir = Path(f'../logs/{log_name}')
+def get_result(log_dir, cfg):
+    # log_dir = Path(f'../logs/{log_name}')
 
-    model_oof = dh.load(log_dir / 'oof.npy')
-    model_cfg = dh.load(log_dir / 'config.yml')
+    if cfg.data_type == 'train':
+        model_preds = dh.load(log_dir / 'oof.npy')
+        model_cfg = dh.load(log_dir / 'config.yml')
 
-    if model_cfg.common.drop:
-        drop_name_list = []
-        for drop_name in model_cfg.common.drop:
-            drop_name_list.append(drop_name)
+        if model_cfg.common.drop:
+            drop_name_list = []
+            for drop_name in model_cfg.common.drop:
+                drop_name_list.append(drop_name)
 
-        drop_idxs = get_drop_idx(drop_name_list)
-        model_oof = fill_dropped(model_oof, drop_idxs)
+            drop_idxs = get_drop_idx(drop_name_list)
+            model_preds = fill_dropped(model_preds, drop_idxs)
 
-    model_preds = dh.load(log_dir / 'raw_preds.npy')
+    elif cfg.data_type == 'test':
+        model_preds = dh.load(log_dir / 'raw_preds.npy')
 
-    return model_oof, model_preds
+    return model_preds
 
 
 def get_target(cfg):
