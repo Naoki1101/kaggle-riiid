@@ -14,9 +14,9 @@ N_CLUSTERS = 1_000
 def create_content_class(df):
     dfs = []
     for i in range(2):
-        tsne_df = pd.read_feather(f'../features/content_id_tsne_{i}_train.feather')
-        tsne_df[f'content_id_tsne_{i}'].fillna(-100, inplace=True)
-        tsne_df[f'content_id_tsne_{i}'] = (tsne_df[f'content_id_tsne_{i}'] - tsne_df[f'content_id_tsne_{i}'].mean()) / tsne_df[f'content_id_tsne_{i}'].std()
+        tsne_df = pd.read_feather(f'../features/dropped___content_id_tsne_{i}_train.feather')
+        tsne_df[f'dropped___content_id_tsne_{i}'].fillna(-100, inplace=True)
+        tsne_df[f'dropped___content_id_tsne_{i}'] = (tsne_df[f'dropped___content_id_tsne_{i}'] - tsne_df[f'dropped___content_id_tsne_{i}'].mean()) / tsne_df[f'dropped___content_id_tsne_{i}'].std()
         dfs.append(tsne_df)
 
     tsne_array = pd.concat(dfs, axis=1).values
@@ -56,19 +56,19 @@ def add_user_feats(df, prior_q_dict, attempt_c_dict, attempt_cc_dict):
 def get_features(df):
     features_df = pd.DataFrame()
 
-    # answered_correctly_sum_u_dict = {}
-    # count_u_dict = {}
     prior_q_dict = {}
     attempt_c_dict = {}
     attempt_cc_dict = {}
 
     features_df = add_user_feats(df, prior_q_dict, attempt_c_dict, attempt_cc_dict)
 
+    features_df.columns = [f'dropped___{col}' for col in features_df.columns]
+
     return features_df
 
 
 def main():
-    train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
+    train_df = pd.read_csv('../data/processed/train_dropped.csv', dtype=const.DTYPE)
 
     train_features_df = get_features(train_df)
     save_features(train_features_df, data_type='train')

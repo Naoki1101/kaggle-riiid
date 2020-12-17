@@ -5,7 +5,9 @@ import git
 import json
 import time
 import yaml
+import math
 import shutil
+import psutil
 import datetime
 from contextlib import contextmanager
 from abc import ABCMeta, abstractmethod
@@ -25,22 +27,43 @@ from easydict import EasyDict as edict
 
 class Timer:
 
-    def __init__(self):
+    def __init__(self, show_memory=False):
         self.processing_time = 0
+        self.show_memory = show_memory
 
     @contextmanager
     def timer(self, name):
         t0 = time.time()
+        if self.show_memory:
+            p = psutil.Process(os.getpid())
+            m0 = p.memory_info()[0] / 2. ** 30
+
         yield
+
         t1 = time.time()
+        if self.show_memory:
+            m1 = p.memory_info()[0] / 2. ** 30
+            delta = m1 - m0
+            sign = '+' if delta >= 0 else '-'
+            delta = math.fabs(delta)
+
         processing_time = t1 - t0
         self.processing_time += round(processing_time, 2)
         if self.processing_time < 60:
-            print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time:.2f} sec)')
+            if self.show_memory:
+                print(f'[{name}] done in {processing_time:.0f} s  {sign}{delta:.1f} GB (Total: {self.processing_time:.2f} sec  {m1:.1f} GB)')
+            else:
+                print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time:.2f} sec)')
         elif self.processing_time < 3600:
-            print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time / 60:.2f} min)')
+            if self.show_memory:
+                print(f'[{name}] done in {processing_time:.0f} s  {sign}{delta:.1f} GB (Total: {self.processing_time / 60:.2f} min  {m1:.1f} GB)')
+            else:
+                print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time / 60:.2f} min)')
         else:
-            print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time / 3600:.2f} hour)')
+            if self.show_memory:
+                print(f'[{name}] done in {processing_time:.0f} s  {sign}{delta:.1f} GB (Total: {self.processing_time / 3600:.2f} hour  {m1:.1f} GB)')
+            else:
+                print(f'[{name}] done in {processing_time:.0f} s (Total: {self.processing_time / 3600:.2f} hour)')
 
     def get_processing_time(self):
         return round(self.processing_time / 60, 2)

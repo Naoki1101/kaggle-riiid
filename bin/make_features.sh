@@ -19,7 +19,26 @@ cd ../src
 # python make_features/14_shift_and_target_encording.py
 # python make_features/15_id_diff.py
 # python make_features/16_task_container_id.py
-python make_features/17_lag_shift.py
+# python make_features/17_lag_shift.py
+
+# python make_features/51_simple.py
+# python make_features/52_loop.py
+# python make_features/53_target_encoding.py
+# python make_features/54_question.py
+# python make_features/55_tsne.py
+# python make_features/56_w2v.py
+# python make_features/57_loop_v2.py
+# python make_features/58_aggs.py
+# python make_features/59_rolling.py
+# python make_features/60_lag.py
+# python make_features/61_rolling_with_time.py
+# python make_features/62_part_lag.py
+# python make_features/62_seq2dec.py
+# python make_features/63_lag_and_agg.py
+python make_features/64_shift_and_target_encording.py
+# python make_features/65_id_diff.py
+# python make_features/66_task_container_id.py
+# python make_features/67_lag_shift.py
 
 # python make_features/91_transformer_current_feats.py
 # python make_features/92_transformer_history_feats.py

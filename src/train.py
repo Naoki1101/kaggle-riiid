@@ -71,7 +71,8 @@ def main():
     #             features.append(oof_col_name)
 
     with t.timer('make folds'):
-        valid_idx = np.load('../data/processed/cv1_valid.npy')
+        # valid_idx = np.load('../data/processed/cv1_valid.npy')
+        valid_idx = np.load('../data/processed/cv1_valid_dropped.npy')
 
         fold_df = pd.DataFrame(index=range(len(train_x)))
         fold_df['fold_0'] = 0

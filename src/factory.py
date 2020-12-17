@@ -1,3 +1,4 @@
+import gc
 import sys
 import numpy as np
 import pandas as pd
@@ -86,6 +87,8 @@ def get_features(features, cfg):
         dfs.append(feat)
 
     df = pd.concat(dfs, axis=1)
+
+    del dfs; gc.collect()
 
     return df
 
