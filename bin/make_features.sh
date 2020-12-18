@@ -20,6 +20,7 @@ cd ../src
 # python make_features/15_id_diff.py
 # python make_features/16_task_container_id.py
 # python make_features/17_lag_shift.py
+python make_features/18_task_loop.py
 
 # python make_features/51_simple.py
 # python make_features/52_loop.py
@@ -35,7 +36,7 @@ cd ../src
 # python make_features/62_part_lag.py
 # python make_features/62_seq2dec.py
 # python make_features/63_lag_and_agg.py
-python make_features/64_shift_and_target_encording.py
+# python make_features/64_shift_and_target_encording.py
 # python make_features/65_id_diff.py
 # python make_features/66_task_container_id.py
 # python make_features/67_lag_shift.py

@@ -197,4 +197,6 @@ features:
 - timestamp_lag_mean
 - timestamp_lag_median
 - timestamp_lag_shift1
+- u_hist_task_nunique10
+- u_hist_task_nunique5
 - user_id
