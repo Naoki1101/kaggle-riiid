@@ -1,0 +1,179 @@
+features:
+  - timestamp
+  - user_id
+  - content_id
+  - task_container_id
+  - prior_question_elapsed_time
+  - prior_question_had_explanation
+  # - question_id
+  # - lr
+  # - part
+  - content_id__answered_correctly_sm5
+  - content_id__answered_correctly_sm5_repeat
+  # - content_id__count
+  - content_id__count_repeat
+  - content_id__entropy__user_answer
+  - content_id__question_elapsed_time_sm5
+  - content_id__std
+  - content_id__std_repeat
+  - content_id__svd_0
+  - content_id__svd_1
+  - content_id__svd_2
+  - content_id__svd_3
+  - content_id__svd_4
+  - content_id__weighted_answered_correctly_sm5
+  - content_id__weighted_answered_correctly_sm5_repeat
+  # - content_id__weighted_score_sm5
+  - content_id__weighted_score_sm5_repeat
+  # - content_order_max
+  # - content_order_mean
+  - content_order_median
+  - content_order_std
+  # - corr_gsvd_0
+  # - corr_gsvd_1
+  # - corr_gsvd_2
+  - corr_gsvd_3
+  # - corr_gsvd_4
+  # - corr_gsvd_5
+  - ge_dw_svd_0
+  - ge_dw_svd_1
+  - ge_dw_svd_2
+  - ge_dw_svd_3
+  # - ge_dw_svd_4
+  # - gsvd_0
+  # - gsvd_1
+  - gsvd_2
+  # - gsvd_3
+  # - gsvd_4
+  - gsvd_5
+  - part__svd_0
+  - part__svd_1
+  - tags_max
+  - tags_mean
+  - tags_min
+  - user_session_end__mean_smooth
+  - user_session_start__mean_smooth
+  - w2v_0
+  - w2v_1
+  - w2v_2
+  - w2v_3
+  - w2v_4
+  # - u_cnt
+  # - u_corr_cnt
+  # - u_hade_cnt
+  # - u_hade_corr_cnt
+  # - u_session_short_cnt
+  - u_cnt_in_session_short
+  - u_cnt_in_session_short_density
+  # - u_latest1_corr_rate
+  # - u_latest3_corr_rate
+  # - u_latest5_corr_rate
+  - u_latest10_corr_rate
+  - u_latest30_corr_rate
+  - u_latest100_corr_rate
+  - u_corr_rate_in_session_short
+  # - u_hist_ques_ansed
+  # - u_hist_ques_num
+  # - u_hist_part_ansed
+  # - u_hist_part_corr_ansed
+  - u_hist_part_num
+  - u_hist_part_corr_num
+  - u_part_1_cnt
+  - u_part_2_cnt
+  - u_part_3_cnt
+  - u_part_4_cnt
+  - u_part_5_cnt
+  - u_part_6_cnt
+  - u_part_7_cnt
+  - u_part_1_corr_rate
+  - u_part_2_corr_rate
+  - u_part_3_corr_rate
+  - u_part_4_corr_rate
+  - u_part_5_corr_rate
+  - u_part_6_corr_rate
+  - u_part_7_corr_rate
+  - u_hist_tag_num
+  - u_hist_tag_corr_num
+  # - u_hist_tag_rank_max
+  - u_hist_tag_rank_min
+  - u_hist_tag_rank_sum
+  - u_hist_tag_corr_rate_max
+  - u_hist_tag_corr_rate_min
+  - u_hist_tag_corr_rate_mn
+  - u_hist_lec_cnt
+  - u_prev_difftime
+  - u_prev_difftime_2
+  - u_prev_difftime_3
+  - u_prev_difftime_4
+  # - u_prev_difftime_5
+  - u_prev_difftime_incorr
+  # - u_prev_lagtime
+  - u_hist_et_sum_div_cnt
+  - u_hist_et_sum_div_corr_cnt
+  - u_latest5_lagtime_max
+  # - u_latest5_difftime_max
+  - u_latest5_lagtime_mn
+  # - u_latest5_difftime_mn
+  - u_latest5_et_mn
+  # - u_latest10_lagtime_max
+  # - u_latest10_difftime_max
+  - u_latest10_lagtime_mn
+  # - u_latest10_difftime_mn
+  - u_latest10_et_mn
+  - u_latest10_et_max
+  - u_prev_et_diff_time
+  # - u_prev_et_lag_time
+  # - u_ts_in_session_short
+  # - timestamp_lag_div_rolling5_median_each_user
+  # - timestamp_lag_div_rolling7_median_each_user
+  # - timestamp_lag_div_rolling10_median_each_user
+  # - timestamp_lag_diff_rolling5_median_each_user
+  # - timestamp_lag_diff_rolling7_median_each_user
+  # - timestamp_lag_diff_rolling10_median_each_user
+  - u_corr_rate
+  - u_hade_corr_rate
+  - u_hade_rate
+  - u_hade_div_corr_cnt
+  - u_corr_rate_smooth
+  - u_hist_part_num_corr_rate
+  - u_hist_tag_num_corr_rate
+  - u_prev_diff_lag_time
+  - u_prev_lag_diff_time
+  - prev_part_s1xxxpart__answered_correctly_sm10
+  - prev_part_s2xxxprev_part_s1xxxpart__answered_correctly_sm10
+  - prev_part_s3xxxprev_part_s2xxxprev_part_s1xxxpart__answered_correctly_sm10
+###################
+  # - te_content_id_by_answered_correctly
+  # - te_content_id_and_attempt_c_by_answered_correctly
+  - content_id_tsne_0
+  - content_id_tsne_1
+  # - tag_w2v_max
+  # - tag_w2v_mean
+  # - tag_w2v_median
+  # - tag_w2v_min
+  # - prior_question_elapsed_time_mean
+  # - prior_question_elapsed_time_median
+  # - prior_question_elapsed_time_std
+  # - timestamp_diff1
+  # - timestamp_diff2
+  # - timestamp_diff3
+  # - timestamp_diff4
+  # - timestamp_diff5
+  - seq2dec_w3
+  - seq2dec_w5
+  - seq2dec_w7
+  - timestamp_lag_diff_median_each_user
+  - timestamp_lag_div_median_each_user
+  - timestamp_lag_median
+  # - timestamp_lag_diff_rolling3_mean_each_user
+  # - timestamp_lag_diff_rolling3_median_each_user
+  # - timestamp_lag_diff_rolling5_mean_each_user
+  # - timestamp_lag_diff_rolling5_median_each_user
+  # - timestamp_lag_diff_rolling7_mean_each_user
+  # - timestamp_lag_diff_rolling7_median_each_user
+  # - te_content_id_prior_by_answered_correctly
+  - content_id_diff_abs
+  - task_container_id_diff_abs
+  # - timestamp_lag_shift1
+  # - u_hist_task_nunique10
+  # - u_hist_task_nunique5
