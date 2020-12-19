@@ -10,7 +10,7 @@ import const
 import factory
 from trainer import Trainer
 from utils import (DataHandler, Notificator, Timer, seed_everything,
-                   Git, Kaggle)
+                   Git, Kaggle, reduce_mem_usage)
 
 warnings.filterwarnings('ignore')
 
@@ -75,11 +75,16 @@ def main():
         train_x = train_x.drop(drop_cols, axis=1)
 
     with t.timer('load additional features'):
-        additional_cols = set(features) - set(train_x.columns)
+        add_df = pd.DataFrame(index=train_x.index)
 
+        additional_cols = set(features) - set(train_x.columns)
         for col in additional_cols:
             feat_df = pd.read_feather(f'../features/{col}_train.feather')
-            train_x[col] = feat_df.loc[use_row_id, col].values
+            add_df[col] = feat_df.loc[use_row_id, col].values
+
+        add_df = reduce_mem_usage(add_df)
+
+        train_x = pd.concat([train_x, add_df], axis=1)
 
     with t.timer('preprocessing'):
         pass
