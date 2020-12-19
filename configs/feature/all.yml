@@ -16,6 +16,8 @@ features:
 - content_id_tsne_0
 - content_id_tsne_1
 - content_type_id
+- count_part2
+- count_part5
 - count_u
 - count_u_class1000
 - dropped___answered_correctly_avg_u
@@ -152,6 +154,9 @@ features:
 - prior_question_elapsed_time_std_by_content_id_bin
 - prior_question_elapsed_time_std_by_user_id_and_part
 - prior_question_had_explanation
+- rate_part2
+- rate_part2_5
+- rate_part5
 - seq2dec_w3
 - seq2dec_w5
 - seq2dec_w7
