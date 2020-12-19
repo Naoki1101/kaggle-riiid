@@ -31,7 +31,7 @@ model:
     params:
         loss_function: Logloss
         eval_metric: AUC
-        learning_rate: 0.3      
+        learning_rate: 0.1  
         iterations: 10_000
         depth: 8
         l2_leaf_reg: 3.0
