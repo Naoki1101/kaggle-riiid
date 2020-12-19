@@ -20,7 +20,8 @@ cd ../src
 # python make_features/15_id_diff.py
 # python make_features/16_task_container_id.py
 # python make_features/17_lag_shift.py
-python make_features/18_task_loop.py
+# python make_features/18_task_loop.py
+python make_features/19_head_part.py
 
 # python make_features/51_simple.py
 # python make_features/52_loop.py

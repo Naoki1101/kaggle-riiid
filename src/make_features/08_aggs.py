@@ -38,7 +38,7 @@ def get_features(df):
 
 def main():
     train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
-    question_df = pd.read_csv(const.INPUT_DATA_DIR / 'questions.csv', dtype=const.DTYPE)
+    question_df = pd.read_csv(const.INPUT_DATA_DIR / 'questions.csv')
     question_df.rename(columns={'question_id': 'content_id'}, inplace=True)
 
     train_df = pd.merge(train_df, question_df, on='content_id', how='left')

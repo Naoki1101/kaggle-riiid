@@ -114,6 +114,7 @@ features:
 - dropped___user_id
 - equal_prior_question_flag
 - equal_prior_question_flag_class1000
+- head_part
 - order_content_id_by_task_container_id
 - order_content_id_div_max_by_task_container_id
 - part
