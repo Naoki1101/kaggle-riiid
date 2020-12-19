@@ -41,7 +41,8 @@ cd ../src
 # python train.py -m 'catboost_901' -c 'custom_901'
 
 # python train_team.py -m 'catboost_501' -c 'custom_501'
-python train_team.py -m 'catboost_502' -c 'custom_502'
+# python train_team.py -m 'catboost_502' -c 'custom_502'
+python train_team.py -m 'catboost_503' -c 'custom_503'
 
 # ======================================================
 # NN
