@@ -36,10 +36,11 @@ cd ../src
 # python train.py -m 'catboost_026' -c 'custom_023'
 # python train.py -m 'catboost_027' -c 'custom_024'
 # python train.py -m 'catboost_028' -c 'custom_024, depth=10'
-python train.py -m 'catboost_029' -c 'custom_025'
+# python train.py -m 'catboost_029' -c 'custom_025'
 
 # python train.py -m 'catboost_901' -c 'custom_901'
 
+python train_team.py -m 'catboost_501' -c 'custom_501'
 
 # ======================================================
 # NN
