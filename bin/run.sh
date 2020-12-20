@@ -67,4 +67,5 @@ cd ../src
 # ======================================================
 # ENSEMBLE
 # ======================================================
-python ensemble_team.py -m 'ensemble_001' -c 'test'
+# python ensemble_team.py -m 'ensemble_001' -c 'test'
+python ensemble_team.py -m 'ensemble_002' -c 'rank=False'

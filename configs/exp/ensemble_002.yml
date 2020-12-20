@@ -14,7 +14,7 @@ opt_params:
     timeout: 120
 
 preprocess:
-  rank: True
+  rank: False
 
 models:
     - catboost_510_20201219163406_0.796
