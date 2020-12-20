@@ -59,4 +59,5 @@ cd ../src
 # ======================================================
 # python train_nn.py -m 'transformer_001' -c 'test'
 
-python train_nn_team.py -m 'mlp_001' -c 'test'
+# python train_nn_team.py -m 'mlp_001' -c 'test'
+python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
