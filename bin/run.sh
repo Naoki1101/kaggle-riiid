@@ -68,6 +68,7 @@ cd ../src
 # python train_nn_team.py -m 'mlp_006' -c 'custom_513, drop=0.1'
 # python train_nn_team.py -m 'mlp_007' -c 'custom_513, drop=0.0'
 # python train_nn_team.py -m 'mlp_008' -c 'custom_513, drop bn'
+python train_nn_team.py -m 'mlp_009' -c 'custom_513, PReLU'
 
 
 # ======================================================
@@ -77,4 +78,4 @@ cd ../src
 # python ensemble_team.py -m 'ensemble_002' -c 'rank=False'
 # python ensemble_team.py -m 'ensemble_003' -c 'cb x1, mlp x1'
 # python ensemble_team.py -m 'ensemble_004' -c 'cb x1, mlp x1'
-python ensemble_team.py -m 'ensemble_005' -c 'cb x1, mlp x1'
+# python ensemble_team.py -m 'ensemble_005' -c 'cb x1, mlp x1'
