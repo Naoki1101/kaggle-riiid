@@ -52,9 +52,11 @@ cd ../src
 # python train_team.py -m 'catboost_510' -c 'custom_509'
 # python train_team.py -m 'catboost_511' -c 'custom_510'
 # python train_team.py -m 'catboost_512' -c 'custom_511'
-python train_team.py -m 'catboost_513' -c 'custom_512'
+# python train_team.py -m 'catboost_513' -c 'custom_512'
 
 # ======================================================
 # NN
 # ======================================================
 # python train_nn.py -m 'transformer_001' -c 'test'
+
+python train_nn_team.py -m 'mlp_001' -c 'test'

@@ -177,8 +177,14 @@ def get_loss(cfg):
     return loss_
 
 
-def get_dataloader(samples, df, cfg):
+def get_transformer_dataloader(samples, df, cfg):
     dataset = getattr(custom_dataset, cfg.dataset_type)(samples, df, cfg)
+    loader = DataLoader(dataset, **cfg.loader)
+    return loader
+
+
+def get_dataloader(df, cfg):
+    dataset = getattr(custom_dataset, cfg.dataset_type)(df, cfg)
     loader = DataLoader(dataset, **cfg.loader)
     return loader
 

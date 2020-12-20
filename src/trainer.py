@@ -125,14 +125,18 @@ class NNTrainer:
             trn_x, val_x = train_df[self.fold_df[col] == 0], train_df[self.fold_df[col] > 0]
             val_y = target_df[self.fold_df[col] > 0].values
 
-            usecols = ['user_id', 'content_id', 'answered_correctly']
-            group = (trn_x[usecols]
-                     .groupby('user_id')
-                     .apply(lambda r: (r['content_id'].values,
-                                       r['answered_correctly'].values)))
+            if 'transformer' in self.cfg.model.backbone:
+                usecols = ['user_id', 'content_id', 'answered_correctly']
+                group = (trn_x[usecols]
+                         .groupby('user_id')
+                         .apply(lambda r: (r['content_id'].values,
+                                           r['answered_correctly'].values)))
 
-            train_loader = factory.get_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
-            valid_loader = factory.get_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)
+                train_loader = factory.get_transformer_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
+                valid_loader = factory.get_transformer_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)
+            else:
+                train_loader = factory.get_dataloader(trn_x, self.cfg.data.train)
+                valid_loader = factory.get_dataloader(val_x, self.cfg.data.valid)
 
             model = factory.get_nn_model(self.cfg).to(device)
 
@@ -232,9 +236,8 @@ class NNTrainer:
                 feats = feats.to(device)
             targets = targets.to(device)
 
-            preds, _ = model(feats)
-            preds = preds[:, -1]
-            targets = targets[:, -1]
+            preds = model(feats)
+            # targets = targets[:, -1]
 
             loss = criterion(preds, targets)
 
@@ -261,9 +264,9 @@ class NNTrainer:
                     feats = feats.to(device)
                 targets = targets.to(device)
 
-                preds, _ = model(feats)
-                preds = preds[:, -1]
-                targets = targets[:, -1]
+                preds = model(feats)
+                # preds = preds[:, -1]
+                # targets = targets[:, -1]
 
                 loss = criterion(preds, targets)
                 valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size, :] = preds.sigmoid().cpu().detach().numpy().reshape(-1, 1)

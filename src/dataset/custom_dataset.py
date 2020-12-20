@@ -1,3 +1,4 @@
+# import gc
 import sys
 import random
 
@@ -119,6 +120,35 @@ class CustomTestDataset(Dataset):
         if const.TARGET_COLS[0] in self.df.columns:
             label = np.append(qa[2:], [row[const.TARGET_COLS[0]]])
             label = torch.FloatTensor(label)
+            return feat, label
+        else:
+            return feat
+
+
+class CustomMlpDataset(Dataset):
+    def __init__(self, df, cfg=None):
+        super(CustomMlpDataset, self).__init__()
+
+        # self.cfg = cfg
+
+        self.feats = df.values
+        self.cols = df.columns.tolist()
+        self.is_train = False
+
+        if const.TARGET_COLS[0] in self.cols:
+            self.labels = df[const.TARGET_COLS[0]].values
+            target_col_idx = self.cols.index(const.TARGET_COLS[0])
+            self.feats = np.delete(self.feats, target_col_idx, axis=1)
+            self.is_train = True
+
+    def __len__(self):
+        return len(self.feats)
+
+    def __getitem__(self, idx):
+        feat = torch.FloatTensor(self.feats[idx])
+
+        if self.is_train:
+            label = torch.tensor(self.labels[idx]).float()
             return feat, label
         else:
             return feat

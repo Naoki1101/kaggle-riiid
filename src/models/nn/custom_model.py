@@ -4,12 +4,13 @@ import layer
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 
-from . import transformer
+from . import mlp, transformer
 
 sys.path.append('../src')
 
 model_encoder = {
-    'transformer_public': transformer.SAKTModel
+    'mlp': mlp.Mlp,
+    'transformer_public': transformer.SAKTModel,
 }
 
 
@@ -19,9 +20,9 @@ def get_head(cfg):
     for m in cfg.values():
         if hasattr(nn, m['name']):
             module = getattr(nn, m['name'])(**m['params'])
-            if hasattr(m, 'weight_norm'):
-                if m['weight_norm']:
-                    module = weight_norm(module)
+            # if hasattr(m, 'weight_norm'):
+            #     if m['weight_norm']:
+            #         module = weight_norm(module)
         elif hasattr(layer, m['name']):
             module = getattr(layer, m['name'])(**m['params'])
         head_modules.append(module)
@@ -42,9 +43,14 @@ def replace_fc(model, cfg):
 class CustomModel(nn.Module):
     def __init__(self, cfg):
         super(CustomModel, self).__init__()
+        self.cfg = cfg
         self.base_model = model_encoder[cfg.model.backbone](**cfg.model.params)
         self.model = replace_fc(self.base_model, cfg)
 
     def forward(self, x):
-        x, w = self.model(x)
-        return x, w
+        if 'transformer' in self.cfg.model.backbone:
+            x, w = self.model(x)
+            return x[:, -1]
+        else:
+            x = self.model(x)
+            return x.view(-1)
