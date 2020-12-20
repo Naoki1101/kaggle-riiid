@@ -10,8 +10,11 @@ common:
 
 opt_params:
     direction: maximize
-    n_trials: 3
-    # timeout: 10
+    # n_trials: 3
+    timeout: 120
+
+preprocess:
+  rank: True
 
 models:
     - catboost_510_20201219163406_0.796

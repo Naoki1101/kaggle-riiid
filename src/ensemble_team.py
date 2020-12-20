@@ -82,6 +82,9 @@ def main():
             if len(drop_idx) > 0:
                 model_oof = np.delete(model_oof, drop_idx, axis=0)
 
+            if cfg.preprocess.rank:
+                model_oof = np.argsort(np.argsort(model_oof)) / len(model_oof)
+
             oof_list.append(model_oof[val_idx].reshape(len(val_idx), -1))
             # preds_list.append(model_preds)
 
@@ -106,8 +109,9 @@ def main():
                 ensemble_oof[:, target_idx] += oof_list[model_idx][:, target_idx] * weight
                 # ensemble_preds[:, target_idx] += preds_list[model_idx][:, target_idx] * weight
 
-            print(ensemble_oof)
-            cv_list.append(metric(val_df[target_col].values, ensemble_oof[:, target_idx]))
+            cv = metric(val_df[target_col],
+                        ensemble_oof[:, target_idx])
+            cv_list.append(cv)
 
         dh.save(f'../logs/{run_name}/oof.npy', ensemble_oof)
         # dh.save(f'../logs/{run_name}/raw_preds.npy', ensemble_preds)
