@@ -111,6 +111,11 @@ def get_result(log_dir, cfg, data_type):
     elif data_type == 'test':
         model_preds = dh.load(log_dir / 'raw_preds.npy')
 
+    model_preds_shape = model_preds.shape
+    if len(model_preds_shape) > 1:
+        if model_preds_shape[1] == 1:
+            model_preds = model_preds.reshape(-1)
+
     return model_preds
 
 

@@ -85,29 +85,28 @@ def main():
             if cfg.preprocess.rank:
                 model_oof = np.argsort(np.argsort(model_oof)) / len(model_oof)
 
-            oof_list.append(model_oof[val_idx].reshape(len(val_idx), -1))
+            print(model_oof[val_idx])
+            oof_list.append(model_oof[val_idx])
             # preds_list.append(model_preds)
 
     with t.timer('optimize model weight'):
         metric = factory.get_metrics(cfg.common.metrics.name)
 
-        best_weight_array = np.zeros((len(const.TARGET_COLS), len(oof_list)))
+        best_weight_array = np.zeros(len(oof_list))
         for target_idx, target in enumerate(const.TARGET_COLS):
             best_weight = opt_ensemble_weight(cfg,
                                               val_df[target],
-                                              [oof[:, target_idx] for oof in oof_list],
+                                              oof_list,
                                               metric)
             best_weight_array[target_idx, :] = best_weight
 
     with t.timer('ensemble'):
         ensemble_oof = np.zeros((len(val_df), len(const.TARGET_COLS)))
-        # ensemble_preds = np.zeros((len(test_df), len(const.TARGET_COLS)))
 
         cv_list = []
         for target_idx, target_col in enumerate(const.TARGET_COLS):
             for model_idx, weight in enumerate(best_weight_array[target_idx]):
-                ensemble_oof[:, target_idx] += oof_list[model_idx][:, target_idx] * weight
-                # ensemble_preds[:, target_idx] += preds_list[model_idx][:, target_idx] * weight
+                ensemble_oof[:, target_idx] += oof_list[model_idx] * weight
 
             cv = metric(val_df[target_col],
                         ensemble_oof[:, target_idx])
