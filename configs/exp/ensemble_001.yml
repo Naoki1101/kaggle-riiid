@@ -10,8 +10,8 @@ common:
 
 opt_params:
     direction: maximize
-    # n_trials: 3
-    timeout: 120
+    n_trials: 3
+    # timeout: 120
 
 preprocess:
   rank: True

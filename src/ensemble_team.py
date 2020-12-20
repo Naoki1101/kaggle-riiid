@@ -1,3 +1,4 @@
+import gc
 import argparse
 import datetime
 import warnings
@@ -58,12 +59,7 @@ def main():
         train_df = pd.concat([train_df, val_df], axis=0, sort=False, ignore_index=True)
         val_idx = train_df[train_df['is_val'] == 1].index
 
-    # with t.timer('load data'):
-    #     train_df = dh.load('../data/input/train_features.feather')
-    #     train_score_df = dh.load('../data/input/train_targets_scored.feather')
-
-    # with t.timer('preprocess'):
-    #     train_df = pd.merge(train_df, train_score_df, on=const.ID_COLS, how='left')
+        del train_df; gc.collect()
 
     with t.timer('drop index'):
         drop_idx = np.array([])
@@ -85,9 +81,7 @@ def main():
             if cfg.preprocess.rank:
                 model_oof = np.argsort(np.argsort(model_oof)) / len(model_oof)
 
-            print(model_oof[val_idx])
             oof_list.append(model_oof[val_idx])
-            # preds_list.append(model_preds)
 
     with t.timer('optimize model weight'):
         metric = factory.get_metrics(cfg.common.metrics.name)
@@ -98,19 +92,16 @@ def main():
                                               val_df[target],
                                               oof_list,
                                               metric)
-            best_weight_array[target_idx, :] = best_weight
 
     with t.timer('ensemble'):
-        ensemble_oof = np.zeros((len(val_df), len(const.TARGET_COLS)))
+        ensemble_oof = np.zeros(len(val_df))
 
         cv_list = []
-        for target_idx, target_col in enumerate(const.TARGET_COLS):
-            for model_idx, weight in enumerate(best_weight_array[target_idx]):
-                ensemble_oof[:, target_idx] += oof_list[model_idx] * weight
+        for model_idx, weight in enumerate(best_weight):
+            ensemble_oof += oof_list[model_idx] * weight
 
-            cv = metric(val_df[target_col],
-                        ensemble_oof[:, target_idx])
-            cv_list.append(cv)
+        cv = metric(val_df[const.TARGET_COLS[0]], ensemble_oof)
+        cv_list.append(cv)
 
         dh.save(f'../logs/{run_name}/oof.npy', ensemble_oof)
         # dh.save(f'../logs/{run_name}/raw_preds.npy', ensemble_preds)
