@@ -66,7 +66,8 @@ cd ../src
 # python train_nn_team.py -m 'mlp_004' -c 'custom_513'
 # python train_nn_team.py -m 'mlp_005' -c 'custom_513'
 # python train_nn_team.py -m 'mlp_006' -c 'custom_513, drop=0.1'
-python train_nn_team.py -m 'mlp_007' -c 'custom_513, drop=0.0'
+# python train_nn_team.py -m 'mlp_007' -c 'custom_513, drop=0.0'
+python train_nn_team.py -m 'mlp_008' -c 'custom_513, drop bn'
 
 
 # ======================================================
