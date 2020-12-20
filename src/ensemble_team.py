@@ -103,9 +103,10 @@ def main():
         cv_list = []
         for target_idx, target_col in enumerate(const.TARGET_COLS):
             for model_idx, weight in enumerate(best_weight_array[target_idx]):
-                ensemble_oof[:, target_idx] += oof_list[model_idx][target_idx] * weight
+                ensemble_oof[:, target_idx] += oof_list[model_idx][:, target_idx] * weight
                 # ensemble_preds[:, target_idx] += preds_list[model_idx][:, target_idx] * weight
 
+            print(ensemble_oof)
             cv_list.append(metric(val_df[target_col].values, ensemble_oof[:, target_idx]))
 
         dh.save(f'../logs/{run_name}/oof.npy', ensemble_oof)
