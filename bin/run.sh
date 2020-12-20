@@ -64,7 +64,7 @@ cd ../src
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
 # python train_nn_team.py -m 'mlp_003' -c 'custom_512, layer_num=3'
 # python train_nn_team.py -m 'mlp_004' -c 'custom_513'
-python train_nn_team.py -m 'mlp_005' -c 'custom_513'
+# python train_nn_team.py -m 'mlp_005' -c 'custom_513'
 
 
 # ======================================================
@@ -72,3 +72,4 @@ python train_nn_team.py -m 'mlp_005' -c 'custom_513'
 # ======================================================
 # python ensemble_team.py -m 'ensemble_001' -c 'test'
 # python ensemble_team.py -m 'ensemble_002' -c 'rank=False'
+python ensemble_team.py -m 'ensemble_003' -c 'cb x1, mlp x1'
