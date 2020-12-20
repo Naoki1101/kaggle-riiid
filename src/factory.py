@@ -79,7 +79,7 @@ def get_features(features, cfg):
             feat = dh.load(f_path)
 
         elif log_dir.exists():
-            feat = get_result(log_dir, cfg)
+            feat = get_result(log_dir, cfg, cfg.data_type)
             feat = pd.DataFrame(feat, columns=[f])
 
         if cfg.reduce:
@@ -93,10 +93,10 @@ def get_features(features, cfg):
     return df
 
 
-def get_result(log_dir, cfg):
+def get_result(log_dir, cfg, data_type):
     # log_dir = Path(f'../logs/{log_name}')
 
-    if cfg.data_type == 'train':
+    if data_type == 'train':
         model_preds = dh.load(log_dir / 'oof.npy')
         model_cfg = dh.load(log_dir / 'config.yml')
 
@@ -108,7 +108,7 @@ def get_result(log_dir, cfg):
             drop_idxs = get_drop_idx(drop_name_list)
             model_preds = fill_dropped(model_preds, drop_idxs)
 
-    elif cfg.data_type == 'test':
+    elif data_type == 'test':
         model_preds = dh.load(log_dir / 'raw_preds.npy')
 
     return model_preds

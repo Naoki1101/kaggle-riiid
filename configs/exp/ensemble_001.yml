@@ -1,0 +1,18 @@
+common:
+    seed: &seed 2020
+    metrics:
+        name: auc
+        params: {}
+    drop:
+    kaggle:
+        data: False
+        notebook: False
+
+opt_params:
+    direction: maximize
+    n_trials: 3
+    # timeout: 10
+
+models:
+    - catboost_510_20201219163406_0.796
+    - mlp_002_20201220101718_0.7610
