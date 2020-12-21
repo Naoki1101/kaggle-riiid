@@ -205,4 +205,7 @@ features:
 - timestamp_lag_shift1
 - u_hist_task_nunique10
 - u_hist_task_nunique5
+- user_difftime_diff_median100
+- user_difftime_div_median100
+- user_difftime_median100
 - user_id
