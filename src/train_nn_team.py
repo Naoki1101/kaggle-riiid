@@ -62,7 +62,7 @@ def main():
         val_x['is_val'] = 1
 
         train_x = pd.concat([train_x, val_x], axis=0, sort=False, ignore_index=True)
-        train_y = train_x[const.TARGET_COLS[0]]
+        train_y = train_x[const.TARGET_COLS]
 
         use_row_id = train_x['row_id'].values
         val_idx = train_x[train_x['is_val'] == 1].index
@@ -84,18 +84,19 @@ def main():
 
     with t.timer('preprocessing'):
         for col in train_x.columns:
-            if col != const.TARGET_COLS[0]:
-                inf_idx = train_x[train_x[col] == np.inf].index.values
+            if col not in cfg.data.features.embedding_cols:
+                if col != const.TARGET_COLS[0]:
+                    inf_idx = train_x[train_x[col] == np.inf].index.values
 
-                if len(inf_idx) > 0:
-                    train_x.loc[inf_idx, col] = np.nan
-                null_count = train_x[col].isnull().sum()
+                    if len(inf_idx) > 0:
+                        train_x.loc[inf_idx, col] = np.nan
+                    null_count = train_x[col].isnull().sum()
 
-                if null_count > 0:
-                    mean_ = train_x[col].mean()
-                    train_x[col] = train_x[col].fillna(mean_)
+                    if null_count > 0:
+                        mean_ = train_x[col].mean()
+                        train_x[col] = train_x[col].fillna(mean_)
 
-                train_x[col] = (train_x[col] - train_x[col].mean()) / train_x[col].std()
+                    train_x[col] = (train_x[col] - train_x[col].mean()) / train_x[col].std()
 
     with t.timer('make folds'):
         fold_df = pd.DataFrame(index=range(len(train_x)))

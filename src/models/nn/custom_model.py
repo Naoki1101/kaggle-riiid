@@ -10,7 +10,10 @@ sys.path.append('../src')
 
 model_encoder = {
     'mlp': mlp.Mlp,
+    'mlp2': mlp.Mlp2,
+
     'tabnet': tabnet.TabNet,
+
     'transformer_public': transformer.SAKTModel,
 }
 
@@ -54,4 +57,4 @@ class CustomModel(nn.Module):
             return x[:, -1]
         else:
             x = self.model(x)
-            return x.view(-1)
+            return x

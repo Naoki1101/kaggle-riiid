@@ -136,7 +136,7 @@ class CustomMlpDataset(Dataset):
         self.is_train = False
 
         if const.TARGET_COLS[0] in self.cols:
-            self.labels = df[const.TARGET_COLS[0]].values
+            self.labels = df[const.TARGET_COLS].values
             target_col_idx = self.cols.index(const.TARGET_COLS[0])
             self.feats = np.delete(self.feats, target_col_idx, axis=1)
             self.is_train = True
@@ -149,6 +149,40 @@ class CustomMlpDataset(Dataset):
 
         if self.is_train:
             label = torch.tensor(self.labels[idx]).float()
+            return feat, label
+        else:
+            return feat
+
+
+class CustomMlpDataset2(Dataset):
+    def __init__(self, df, cfg=None):
+        super(CustomMlpDataset2, self).__init__()
+
+        self.contents = df[['content_id']].values
+        self.is_train = False
+
+        drop_cols = ['content_id']
+
+        if const.TARGET_COLS[0] in df.columns:
+            self.labels = df[const.TARGET_COLS].values
+            self.is_train = True
+            drop_cols += const.TARGET_COLS
+        else:
+            self.feats = df.drop(['content_id'], axis=1).values
+
+        self.feats = df.drop(drop_cols, axis=1).values
+
+    def __len__(self):
+        return len(self.feats)
+
+    def __getitem__(self, idx):
+        feat = {
+            'x': torch.FloatTensor(self.feats[idx]),
+            'content': torch.LongTensor(self.contents[idx])
+        }
+
+        if self.is_train:
+            label = torch.FloatTensor(self.labels[idx])
             return feat, label
         else:
             return feat

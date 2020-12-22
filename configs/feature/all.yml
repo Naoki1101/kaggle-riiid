@@ -209,3 +209,4 @@ features:
 - user_difftime_div_median100
 - user_difftime_median100
 - user_id
+- user_part_continous_count
