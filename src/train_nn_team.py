@@ -89,7 +89,7 @@ def main():
                     inf_idx = train_x[train_x[col] == np.inf].index.values
 
                     if len(inf_idx) > 0:
-                        train_x.loc[inf_idx, col] = np.nan
+                        train_x.loc[inf_idx, col] = train_x.drop(inf_idx)[col].max() * 1.2
                     null_count = train_x[col].isnull().sum()
 
                     if null_count > 0:

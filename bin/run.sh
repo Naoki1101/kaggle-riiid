@@ -54,7 +54,7 @@ cd ../src
 # python train_team.py -m 'catboost_512' -c 'custom_511'
 # python train_team.py -m 'catboost_513' -c 'custom_512'
 # python train_team.py -m 'catboost_514' -c 'custom_514'
-python train_team.py -m 'catboost_515' -c 'custom_515'
+# python train_team.py -m 'catboost_515' -c 'custom_515'
 
 
 # ======================================================
@@ -74,6 +74,7 @@ python train_team.py -m 'catboost_515' -c 'custom_515'
 # python train_nn_team.py -m 'mlp_010' -c 'custom_513'
 # python train_nn_team.py -m 'mlp_011' -c 'custom_514'
 # python train_nn_team.py -m 'mlp_012' -c 'custom_514, embedding'
+python train_nn_team.py -m 'mlp_013' -c 'custom_514'
 
 # python train_nn_team.py -m 'tabnet_001' -c 'custom_514'
 
