@@ -4,12 +4,13 @@ import layer
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 
-from . import mlp, transformer
+from . import mlp, tabnet, transformer
 
 sys.path.append('../src')
 
 model_encoder = {
     'mlp': mlp.Mlp,
+    'tabnet': tabnet.TabNet,
     'transformer_public': transformer.SAKTModel,
 }
 
@@ -20,9 +21,9 @@ def get_head(cfg):
     for m in cfg.values():
         if hasattr(nn, m['name']):
             module = getattr(nn, m['name'])(**m['params'])
-            # if hasattr(m, 'weight_norm'):
-            #     if m['weight_norm']:
-            #         module = weight_norm(module)
+            if hasattr(m, 'weight_norm'):
+                if m['weight_norm']:
+                    module = weight_norm(module)
         elif hasattr(layer, m['name']):
             module = getattr(layer, m['name'])(**m['params'])
         head_modules.append(module)
