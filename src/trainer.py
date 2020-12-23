@@ -237,7 +237,8 @@ class NNTrainer:
             targets = targets.to(device)
 
             preds = model(feats)
-            # targets = targets[:, -1]
+            if 'transformer' in self.cfg.model.backbone:
+                targets = targets[:, -1]
 
             loss = criterion(preds, targets)
 
@@ -265,8 +266,8 @@ class NNTrainer:
                 targets = targets.to(device)
 
                 preds = model(feats)
-                # preds = preds[:, -1]
-                # targets = targets[:, -1]
+                if 'transformer' in self.cfg.model.backbone:
+                    targets = targets[:, -1]
 
                 loss = criterion(preds, targets)
                 valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size, :] = preds.sigmoid().cpu().detach().numpy().reshape(-1, 1)

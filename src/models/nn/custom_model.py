@@ -53,7 +53,7 @@ class CustomModel(nn.Module):
 
     def forward(self, x):
         if 'transformer' in self.cfg.model.backbone:
-            x, w = self.model(x)
+            x, _ = self.model(x)
             return x[:, -1]
         else:
             x = self.model(x)

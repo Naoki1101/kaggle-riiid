@@ -60,7 +60,7 @@ cd ../src
 # ======================================================
 # NN
 # ======================================================
-# python train_nn.py -m 'transformer_001' -c 'test'
+python train_nn.py -m 'transformer_001' -c 'test'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
@@ -74,7 +74,7 @@ cd ../src
 # python train_nn_team.py -m 'mlp_010' -c 'custom_513'
 # python train_nn_team.py -m 'mlp_011' -c 'custom_514'
 # python train_nn_team.py -m 'mlp_012' -c 'custom_514, embedding'
-python train_nn_team.py -m 'mlp_013' -c 'custom_514'
+# python train_nn_team.py -m 'mlp_013' -c 'custom_514'
 
 # python train_nn_team.py -m 'tabnet_001' -c 'custom_514'
 

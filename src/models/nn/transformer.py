@@ -56,10 +56,10 @@ class SAKTModel(nn.Module):
         device = x.device
 
         x = self.embedding(x)
-        pos_id = torch.arange(x.size(1)).unsqueeze(0).to(device)
+        # pos_id = torch.arange(x.size(1)).unsqueeze(0).to(device)
 
-        pos_x = self.pos_embedding(pos_id)
-        x = x + pos_x
+        # pos_x = self.pos_embedding(pos_id)
+        # x = x + pos_x
 
         e = self.e_embedding(question_ids)
 

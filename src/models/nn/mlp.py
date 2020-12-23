@@ -30,7 +30,7 @@ class Mlp2(nn.Module):
         c = feats['content']
 
         c = self.embedding(c)
-        c = c.view(len(c), -1)
+        c = c.squeeze(1)
         c = self.emb_fc(c)
 
         x = torch.cat([x, c], dim=1)
