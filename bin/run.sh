@@ -55,12 +55,13 @@ cd ../src
 # python train_team.py -m 'catboost_513' -c 'custom_512'
 # python train_team.py -m 'catboost_514' -c 'custom_514'
 # python train_team.py -m 'catboost_515' -c 'custom_515'
+python train_team.py -m 'catboost_516' -c 'custom_516'
 
 
 # ======================================================
 # NN
 # ======================================================
-python train_nn.py -m 'transformer_001' -c 'test'
+# python train_nn.py -m 'transformer_001' -c 'test'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'

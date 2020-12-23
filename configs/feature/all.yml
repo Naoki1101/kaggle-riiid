@@ -210,3 +210,6 @@ features:
 - user_difftime_median100
 - user_id
 - user_part_continous_count
+- user_part_count10
+- user_part_count20
+- user_part_count30

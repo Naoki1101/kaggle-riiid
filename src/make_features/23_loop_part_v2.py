@@ -9,24 +9,29 @@ from feature_utils import save_features
 
 
 def add_user_feats(df, user_part_dict):
-    user_part_c_count = np.zeros(len(df))
-    default_array = np.array([np.nan, 0])
+    user_part_count10 = np.zeros(len(df))
+    user_part_count20 = np.zeros(len(df))
+    user_part_count30 = np.zeros(len(df))
+    default_array = np.zeros(30) - 1
 
     for idx, row in enumerate(tqdm(df[['user_id', 'part']].values)):
         user_id = row[0]
         part = row[1]
 
-        prev_part, counter = user_part_dict.setdefault(user_id, default_array.copy())
-        if part == prev_part:
-            user_part_c_count[idx] = counter + 1
-            user_part_dict[user_id][1] = counter + 1
-        else:
-            user_part_c_count[idx] = 1
-            user_part_dict[user_id][0] = part
-            user_part_dict[user_id][1] = 1
+        user_hist_part_array = user_part_dict.setdefault(user_id, default_array.copy())
+        user_part_count10[idx] = len(np.where(user_hist_part_array[-10:] == part)[0])
+        user_part_count20[idx] = len(np.where(user_hist_part_array[-20:] == part)[0])
+        user_part_count30[idx] = len(np.where(user_hist_part_array[-30:] == part)[0])
+
+        new_list = list(user_part_dict[user_id])
+        new_list.pop(0)
+        new_list.append(part)
+        user_part_dict[user_id] = np.array(new_list)
 
     user_feats_df = pd.DataFrame({
-        'user_part_continous_count': user_part_c_count,
+        'user_part_count10': user_part_count10,
+        'user_part_count20': user_part_count20,
+        'user_part_count30': user_part_count30,
     })
 
     return user_feats_df
