@@ -53,9 +53,13 @@ def main():
 
     with t.timer('load data'):
         if cfg.common.debug:
-            train_df = pd.read_csv('../data/input/train.csv', dtype=const.DTYPE, nrows=10**6)
+            train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE, nrows=10**6)
         else:
-            train_df = pd.read_csv('../data/input/train.csv', dtype=const.DTYPE)
+            train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
+
+        questions_df = pd.read_csv(const.INPUT_DATA_DIR / 'questions.csv')
+        q2p = dict(questions_df[['question_id', 'part']].values)
+        train_df['part'] = train_df['content_id'].map(q2p)
 
     with t.timer('make folds'):
         valid_idx = np.load('../data/processed/cv1_valid.npy')

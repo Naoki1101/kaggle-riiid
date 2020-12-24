@@ -5,19 +5,26 @@ common:
         params: {}
     drop:
       - lecture_idx
-    debug: False
+    debug: True
     kaggle:
         data: False
         notebook: False
 
 model:
-    backbone: transformer_public
+    backbone: transformer_saint
     n_classes: &class 1
     epochs: &epochs 30
     params:
-        n_skill: &n_skill 13_523
-        max_seq: &max_seq 120
-    multi_gpu: False
+        dim_model: 128
+        num_en: 6
+        num_de: 6
+        heads_en: 8
+        heads_de: 8
+        total_ex: &n_skill 13_523
+        total_cat: 8
+        total_in: 2
+        seq_len: &max_seq 101
+    multi_gpu: True
     head:
 
 data:
@@ -29,29 +36,29 @@ data:
             max_seq: *max_seq
         loader:
             shuffle: True
-            batch_size: 2048
+            batch_size: 512
             num_workers: 4
         transforms:
     valid:
-        dataset_type: CustomTestDataset
+        dataset_type: CustomTestDataset2
         is_train: False
         params:
             n_skill: *n_skill
             max_seq: *max_seq
         loader:
             shuffle: False
-            batch_size: 1024
+            batch_size: 512
             num_workers: 4
         transforms:
     test:
-        dataset_type: CustomTestDataset
+        dataset_type: CustomTestDataset2
         is_train: False
         params:
             n_skill: *n_skill
             max_seq: *max_seq
         loader:
             shuffle: False
-            batch_size: 2048
+            batch_size: 512
             num_workers: 4
         transforms:
 

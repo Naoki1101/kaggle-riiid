@@ -126,12 +126,12 @@ class NNTrainer:
             val_y = target_df[self.fold_df[col] > 0].values
 
             if 'transformer' in self.cfg.model.backbone:
-                usecols = ['user_id', 'content_id', 'timestamp', 'answered_correctly']
+                usecols = ['user_id', 'content_id', 'part', 'answered_correctly']
                 group = (trn_x[usecols]
                          .groupby('user_id')
                          .apply(lambda r: (r['content_id'].values,
                                            r['answered_correctly'].values,
-                                           r['timestamp'].values)))
+                                           r['part'].values)))
 
                 train_loader = factory.get_transformer_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
                 valid_loader = factory.get_transformer_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)
@@ -230,6 +230,9 @@ class NNTrainer:
         avg_loss = 0.
 
         for feats, targets in progress_bar(train_loader, parent=mb):
+            # print(feats['in_ex'])
+            # print(feats['in_cat'])
+            # print(feats['in_de'])
             if type(feats) == dict:
                 for k, v in feats.items():
                     feats[k] = v.to(device)
@@ -238,9 +241,9 @@ class NNTrainer:
             targets = targets.to(device)
 
             preds = model(feats)
-            if 'transformer' in self.cfg.model.backbone:
-                targets = targets[:, -1]
 
+            # print(preds)
+            # print(targets)
             loss = criterion(preds, targets)
 
             optimizer.zero_grad()
@@ -267,10 +270,11 @@ class NNTrainer:
                 targets = targets.to(device)
 
                 preds = model(feats)
-                if 'transformer' in self.cfg.model.backbone:
-                    targets = targets[:, -1]
 
                 loss = criterion(preds, targets)
+
+                if 'transformer' in self.cfg.model.backbone:
+                    preds = preds[:, -1]
                 valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size, :] = preds.sigmoid().cpu().detach().numpy().reshape(-1, 1)
                 avg_val_loss += loss.item() / len(valid_loader)
 

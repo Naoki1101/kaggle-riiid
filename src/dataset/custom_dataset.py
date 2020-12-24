@@ -132,91 +132,131 @@ class CustomTestDataset(Dataset):
             return feat
 
 
-# class CustomTrainDataset2(Dataset):
-#     def __init__(self, samples, df, cfg=None):
-#         super(CustomTrainDataset2, self).__init__()
-#         self.max_seq = cfg.params.max_seq
-#         self.n_skill = cfg.params.n_skill
-#         self.samples = samples
+# =================================================================================
+# SAINT
+class CustomTrainDataset2(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTrainDataset2, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
 
-#         self.user_ids = []
-#         for user_id in samples.index:
-#             q, qa = samples[user_id]
-#             if len(q) < 2:
-#                 continue
-#             self.user_ids.append(user_id)
+        self.user_ids = []
+        for user_id in samples.index:
+            q, _, _ = samples[user_id]
+            if len(q) < 2:
+                continue
+            self.user_ids.append(user_id)
 
-#     def __len__(self):
-#         return len(self.user_ids)
+    def __len__(self):
+        return len(self.user_ids)
 
-#     def __getitem__(self, index):
-#         user_id = self.user_ids[index]
-#         q_, qa_ = self.samples[user_id]
-#         seq_len = len(q_)
+    def __getitem__(self, index):
+        user_id = self.user_ids[index]
+        q_, qa_, qp_ = self.samples[user_id]
+        seq_len = len(q_)
 
-#         feats = []
-#         labels = []
+        q = np.zeros(self.max_seq, dtype=int)
+        qa = np.zeros(self.max_seq, dtype=int)
+        qp = np.zeros(self.max_seq, dtype=int)
 
-#         if seq_len >= self.max_seq:
-#             start = random.randint(0, (seq_len - self.max_seq))
-#             end = start + self.max_seq
-#             while seq_len > start:
-#                 q = q_[start: end]
-#                 qa = qa_[start: end]
+        if seq_len >= self.max_seq:
+            if random.random() > 0.1:
+                start = random.randint(0, (seq_len - self.max_seq))
+                end = start + self.max_seq
+                q[:] = q_[start: end]
+                qa[:] = qa_[start: end]
+                qp[:] = qp_[start: end]
+            else:
+                q[:] = q_[-self.max_seq:]
+                qa[:] = qa_[-self.max_seq:]
+                qp[:] = qp_[-self.max_seq:]
+        else:
+            if random.random() > 0.1:
+                start = 0
+                end = random.randint(2, seq_len)
+                seq_len = end - start
+                q[-seq_len:] = q_[0: seq_len]
+                qa[-seq_len:] = qa_[0: seq_len]
+                qp[-seq_len:] = qp_[0: seq_len]
+            else:
+                q[-seq_len:] = q_
+                qa[-seq_len:] = qa_
+                qp[-seq_len:] = qp_
 
-#                 start = end
-#                 end = end + self.max_seq
+        target_id = q[1:]
+        label = qa[1:]
+        part = qp[1:]
+        ac = qa[1:].copy()
 
-#                 target_id = q[1:]
-#                 label = qa[1:]
+        feat = {
+            'in_ex': torch.LongTensor(target_id),
+            'in_cat': torch.LongTensor(part),
+            'in_de': torch.LongTensor(ac),
+        }
 
-#                 x = np.zeros(self.max_seq - 1, dtype=int)
-#                 x = q[:-1].copy()
-#                 x += (qa[:-1] == 1) * self.n_skill
+        label = torch.FloatTensor(label)
 
-#                 feat = {
-#                     'x': torch.LongTensor(x),
-#                     'target_id': torch.LongTensor(target_id)
-#                 }
-#                 label = torch.FloatTensor(label)
-
-#                 if len(q) == self.max_seq:
-#                     feats.append(feat)
-#                     labels.append(label)
-
-#         else:
-#             q = np.zeros(self.max_seq, dtype=int)
-#             qa = np.zeros(self.max_seq, dtype=int)
-
-#             if random.random() > 0.1:
-#                 start = 0
-#                 end = random.randint(2, seq_len)
-#                 seq_len = end - start
-#                 q[-seq_len:] = q_[0:seq_len]
-#                 qa[-seq_len:] = qa_[0:seq_len]
-#             else:
-#                 q[-seq_len:] = q_
-#                 qa[-seq_len:] = qa_
-
-#             target_id = q[1:]
-#             label = qa[1:]
-
-#             x = np.zeros(self.max_seq - 1, dtype=int)
-#             x = q[:-1].copy()
-#             x += (qa[:-1] == 1) * self.n_skill
-
-#             feat = {
-#                 'x': torch.LongTensor(x),
-#                 'target_id': torch.LongTensor(target_id)
-#             }
-#             label = torch.FloatTensor(label)
-
-#             feats.append(feat)
-#             labels.append(label)
-
-#         return feats, labels
+        return feat, label
 
 
+class CustomTestDataset2(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTestDataset2, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
+        self.user_ids = [x for x in df['user_id'].unique()]
+        self.df = df
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
+
+        user_id = row['user_id']
+        target_id = row['content_id']
+        part = row['part']
+
+        q = np.zeros(self.max_seq, dtype=int)
+        qa = np.zeros(self.max_seq, dtype=int)
+        qp = np.zeros(self.max_seq, dtype=int)
+
+        if user_id in self.samples.index:
+            q_, qa_, qp_ = self.samples[user_id]
+
+            seq_len = len(q_)
+
+            if seq_len >= self.max_seq:
+                q = q_[-self.max_seq:]
+                qa = qa_[-self.max_seq:]
+                qp = qp_[-self.max_seq:]
+            else:
+                q[-seq_len:] = q_
+                qa[-seq_len:] = qa_
+                qp[-seq_len:] = qp_
+
+        questions = np.append(q[2:], [target_id])
+        parts = np.append(qp[2:], [part])
+
+        ac = qa[:-1].copy()
+
+        feat = {
+            'in_ex': torch.LongTensor(questions),
+            'in_cat': torch.LongTensor(parts),
+            'in_de': torch.LongTensor(ac),
+        }
+
+        if const.TARGET_COLS[0] in self.df.columns:
+            label = np.append(qa[2:], [row[const.TARGET_COLS[0]]])
+            label = torch.FloatTensor(label)
+            return feat, label
+        else:
+            return feat
+
+
+# =================================================================================
 class CustomMlpDataset(Dataset):
     def __init__(self, df, cfg=None):
         super(CustomMlpDataset, self).__init__()

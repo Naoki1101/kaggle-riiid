@@ -74,4 +74,4 @@ class SAKTModel(nn.Module):
         x = self.layer_normal(x + att_output)
         x = self.pred(x)
 
-        return x.squeeze(-1), att_weight
+        return x.squeeze(-1)

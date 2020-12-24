@@ -4,7 +4,7 @@ import layer
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 
-from . import mlp, tabnet, transformer
+from . import mlp, tabnet, transformer, saint
 
 sys.path.append('../src')
 
@@ -15,6 +15,7 @@ model_encoder = {
     'tabnet': tabnet.TabNet,
 
     'transformer_public': transformer.SAKTModel,
+    'transformer_saint': saint.SAINT,
 }
 
 
@@ -52,9 +53,5 @@ class CustomModel(nn.Module):
         self.model = replace_fc(self.base_model, cfg)
 
     def forward(self, x):
-        if 'transformer' in self.cfg.model.backbone:
-            x, _ = self.model(x)
-            return x[:, -1]
-        else:
-            x = self.model(x)
-            return x
+        x = self.model(x)
+        return x
