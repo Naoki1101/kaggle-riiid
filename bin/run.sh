@@ -62,7 +62,7 @@ cd ../src
 # NN
 # ======================================================
 # python train_nn.py -m 'transformer_001' -c 'test'
-python train_nn.py -m 'transformer_002' -c 'test saint model'
+# python train_nn.py -m 'transformer_002' -c 'test saint model'
 python train_nn.py -m 'transformer_003' -c 'dim_model=256'
 python train_nn.py -m 'transformer_004' -c 'num_en, num_de=3'
 
