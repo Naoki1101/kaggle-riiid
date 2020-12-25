@@ -16,8 +16,8 @@ model:
     epochs: &epochs 30
     params:
         dim_model: 128
-        num_en: 2
-        num_de: 2
+        num_en: 3
+        num_de: 3
         heads_en: 8
         heads_de: 8
         total_ex: &n_skill 13_523

@@ -15,7 +15,7 @@ model:
     n_classes: &class 1
     epochs: &epochs 30
     params:
-        dim_model: 128
+        dim_model: 256
         num_en: 2
         num_de: 2
         heads_en: 8

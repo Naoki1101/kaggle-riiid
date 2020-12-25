@@ -25,7 +25,7 @@ cd ../src
 # python make_features/20_part2_5.py
 # python make_features/21_loop_lag.py
 # python make_features/22_loop_part.py
-python make_features/23_loop_part_v2.py
+# python make_features/23_loop_part_v2.py
 
 # python make_features/51_simple.py
 # python make_features/52_loop.py
@@ -48,3 +48,4 @@ python make_features/23_loop_part_v2.py
 
 # python make_features/91_transformer_current_feats.py
 # python make_features/92_transformer_history_feats.py
+python make_features/93_transformer_seq.py

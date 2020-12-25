@@ -8,6 +8,9 @@ from torch.utils.data import Dataset
 
 sys.path.append('../src')
 import const
+from utils import DataHandler
+
+dh = DataHandler()
 
 
 # https://www.kaggle.com/leadbest/sakt-with-randomization-state-updates
@@ -20,7 +23,7 @@ class CustomTrainDataset(Dataset):
 
         self.user_ids = []
         for user_id in samples.index:
-            q, qa = samples[user_id]
+            q, qa, qp = samples[user_id]
             if len(q) < 2:
                 continue
             self.user_ids.append(user_id)
@@ -30,12 +33,12 @@ class CustomTrainDataset(Dataset):
 
     def __getitem__(self, index):
         user_id = self.user_ids[index]
-        q_, qa_, qt_ = self.samples[user_id]
+        q_, qa_, qp_ = self.samples[user_id]
         seq_len = len(q_)
 
         q = np.zeros(self.max_seq, dtype=int)
         qa = np.zeros(self.max_seq, dtype=int)
-        qt = np.zeros(self.max_seq, dtype=int)
+        qp = np.zeros(self.max_seq, dtype=int)
 
         if seq_len >= self.max_seq:
             if random.random() > 0.1:
@@ -43,11 +46,11 @@ class CustomTrainDataset(Dataset):
                 end = start + self.max_seq
                 q[:] = q_[start: end]
                 qa[:] = qa_[start: end]
-                qt[:] = qt_[start: end]
+                qp[:] = qp_[start: end]
             else:
                 q[:] = q_[-self.max_seq:]
                 qa[:] = qa_[-self.max_seq:]
-                qt[:] = qt_[-self.max_seq:]
+                qp[:] = qp_[-self.max_seq:]
         else:
             if random.random() > 0.1:
                 start = 0
@@ -55,15 +58,15 @@ class CustomTrainDataset(Dataset):
                 seq_len = end - start
                 q[-seq_len:] = q_[0: seq_len]
                 qa[-seq_len:] = qa_[0: seq_len]
-                qt[-seq_len:] = qt_[0: seq_len]
+                qp[-seq_len:] = qp_[0: seq_len]
             else:
                 q[-seq_len:] = q_
                 qa[-seq_len:] = qa_
-                qt[-seq_len:] = qt_
+                qp[-seq_len:] = qp_
 
         target_id = q[1:]
         label = qa[1:]
-        timestamp = qt[1:]
+        part = qp[1:]
 
         x = np.zeros(self.max_seq - 1, dtype=int)
         x = q[:-1].copy()
@@ -72,7 +75,7 @@ class CustomTrainDataset(Dataset):
         feat = {
             'x': torch.LongTensor(x),
             'target_id': torch.LongTensor(target_id),
-            'timestamp': torch.LongTensor(timestamp)
+            'part': torch.LongTensor(part)
         }
 
         label = torch.FloatTensor(label)
@@ -102,7 +105,7 @@ class CustomTestDataset(Dataset):
         qa = np.zeros(self.max_seq, dtype=int)
 
         if user_id in self.samples.index:
-            q_, qa_ = self.samples[user_id]
+            q_, qa_, qt_ = self.samples[user_id]
 
             seq_len = len(q_)
 
@@ -184,16 +187,18 @@ class CustomTrainDataset2(Dataset):
                 qa[-seq_len:] = qa_
                 qp[-seq_len:] = qp_
 
-        target_id = q[1:]
-        label = qa[1:]
-        part = qp[1:]
-        ac = qa[1:].copy()
+        target_id = q[1:].copy()
+        label = qa[1:].copy()
+        part = qp[1:].copy()
+        ac = qa[:-1].copy()
 
         feat = {
             'in_ex': torch.LongTensor(target_id),
             'in_cat': torch.LongTensor(part),
             'in_de': torch.LongTensor(ac),
         }
+        # print(user_id)
+        # print(feat)
 
         label = torch.FloatTensor(label)
 
@@ -206,7 +211,7 @@ class CustomTestDataset2(Dataset):
         self.max_seq = cfg.params.max_seq
         self.n_skill = cfg.params.n_skill
         self.samples = samples
-        self.user_ids = [x for x in df['user_id'].unique()]
+        # self.user_ids = [x for x in df['user_id'].unique()]
         self.df = df
 
     def __len__(self):
@@ -215,41 +220,18 @@ class CustomTestDataset2(Dataset):
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
 
-        user_id = row['user_id']
-        target_id = row['content_id']
-        part = row['part']
+        row_id = row['row_id']
 
-        q = np.zeros(self.max_seq, dtype=int)
-        qa = np.zeros(self.max_seq, dtype=int)
-        qp = np.zeros(self.max_seq, dtype=int)
-
-        if user_id in self.samples.index:
-            q_, qa_, qp_ = self.samples[user_id]
-
-            seq_len = len(q_)
-
-            if seq_len >= self.max_seq:
-                q = q_[-self.max_seq:]
-                qa = qa_[-self.max_seq:]
-                qp = qp_[-self.max_seq:]
-            else:
-                q[-seq_len:] = q_
-                qa[-seq_len:] = qa_
-                qp[-seq_len:] = qp_
-
-        questions = np.append(q[2:], [target_id])
-        parts = np.append(qp[2:], [part])
-
-        ac = qa[:-1].copy()
+        seq_list = dh.load(f'../data/seq/row_{int(row_id)}.pkl')
 
         feat = {
-            'in_ex': torch.LongTensor(questions),
-            'in_cat': torch.LongTensor(parts),
-            'in_de': torch.LongTensor(ac),
+            'in_ex': torch.LongTensor(seq_list[0]),
+            'in_cat': torch.LongTensor(seq_list[1]),
+            'in_de': torch.LongTensor(seq_list[2]),
         }
 
         if const.TARGET_COLS[0] in self.df.columns:
-            label = np.append(qa[2:], [row[const.TARGET_COLS[0]]])
+            label = np.append(seq_list[2][1:], [row[const.TARGET_COLS[0]]])
             label = torch.FloatTensor(label)
             return feat, label
         else:
