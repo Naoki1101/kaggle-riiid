@@ -362,7 +362,7 @@ class CustomTestDataset3(Dataset):
         }
 
         if const.TARGET_COLS[0] in self.df.columns:
-            label = np.append(seq_list[2][1:], [row[const.TARGET_COLS[0]]])
+            label = np.append(seq_list[4][1:], [row[const.TARGET_COLS[0]]])
             label = torch.FloatTensor(label)
             return feat, label
         else:

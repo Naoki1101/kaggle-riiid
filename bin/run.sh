@@ -67,6 +67,7 @@ cd ../src
 # python train_nn.py -m 'transformer_004' -c 'num_en, num_de=3'
 # python train_nn.py -m 'transformer_005' -c 'dim_model=512'
 python train_nn.py -m 'transformer_006' -c 'saint_v2, add difftime, prior_elapsed'
+python train_nn.py -m 'transformer_007' -c '006, lr=0.01'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
