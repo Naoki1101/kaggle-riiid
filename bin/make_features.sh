@@ -48,4 +48,5 @@ cd ../src
 
 # python make_features/91_transformer_current_feats.py
 # python make_features/92_transformer_history_feats.py
-python make_features/93_transformer_seq.py
+# python make_features/93_transformer_seq.py
+python make_features/94_transformer_seq2.py

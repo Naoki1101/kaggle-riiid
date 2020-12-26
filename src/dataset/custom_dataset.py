@@ -146,7 +146,7 @@ class CustomTrainDataset2(Dataset):
 
         self.user_ids = []
         for user_id in samples.index:
-            q, _, _ = samples[user_id]
+            q, _, _, _, _ = samples[user_id]
             if len(q) < 2:
                 continue
             self.user_ids.append(user_id)
@@ -156,7 +156,7 @@ class CustomTrainDataset2(Dataset):
 
     def __getitem__(self, index):
         user_id = self.user_ids[index]
-        q_, qa_, qp_ = self.samples[user_id]
+        q_, qa_, _, _, qp_ = self.samples[user_id]
         seq_len = len(q_)
 
         q = np.zeros(self.max_seq, dtype=int)
@@ -228,6 +228,115 @@ class CustomTestDataset2(Dataset):
             'in_ex': torch.LongTensor(seq_list[0]),
             'in_cat': torch.LongTensor(seq_list[1]),
             'in_de': torch.LongTensor(seq_list[2]),
+        }
+
+        if const.TARGET_COLS[0] in self.df.columns:
+            label = np.append(seq_list[2][1:], [row[const.TARGET_COLS[0]]])
+            label = torch.FloatTensor(label)
+            return feat, label
+        else:
+            return feat
+
+
+# =================================================================================
+# SAINT v2
+class CustomTrainDataset3(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTrainDataset3, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
+
+        self.user_ids = []
+        for user_id in samples.index:
+            q, _, _, _, _ = samples[user_id]
+            if len(q) < 2:
+                continue
+            self.user_ids.append(user_id)
+
+    def __len__(self):
+        return len(self.user_ids)
+
+    def __getitem__(self, index):
+        user_id = self.user_ids[index]
+        q_, qa_, qc_, _, qp_ = self.samples[user_id]
+        seq_len = len(q_)
+
+        q = np.zeros(self.max_seq, dtype=int)
+        qa = np.zeros(self.max_seq, dtype=int)
+        qc = np.zeros(self.max_seq, dtype=int)
+        qp = np.zeros(self.max_seq, dtype=int)
+
+        if seq_len >= self.max_seq:
+            if random.random() > 0.1:
+                start = random.randint(0, (seq_len - self.max_seq))
+                end = start + self.max_seq
+                q[:] = q_[start: end]
+                qa[:] = qa_[start: end]
+                qc[:] = qc_[start: end]
+                qp[:] = qp_[start: end]
+            else:
+                q[:] = q_[-self.max_seq:]
+                qa[:] = qa_[-self.max_seq:]
+                qc[:] = qa_[-self.max_seq:]
+                qp[:] = qp_[-self.max_seq:]
+        else:
+            if random.random() > 0.1:
+                start = 0
+                end = random.randint(2, seq_len)
+                seq_len = end - start
+                q[-seq_len:] = q_[0: seq_len]
+                qa[-seq_len:] = qa_[0: seq_len]
+                qc[-seq_len:] = qc_[0: seq_len]
+                qp[-seq_len:] = qp_[0: seq_len]
+            else:
+                q[-seq_len:] = q_
+                qa[-seq_len:] = qa_
+                qc[-seq_len:] = qc_
+                qp[-seq_len:] = qp_
+
+        target_id = q[1:].copy()
+        label = qa[1:].copy()
+        task_container_id = qc[1:].copy()
+        part = qp[1:].copy()
+        ac = qa[:-1].copy()
+
+        feat = {
+            'in_ex': torch.LongTensor(target_id),
+            'in_tc': torch.LongTensor(task_container_id),
+            'in_cat': torch.LongTensor(part),
+            'in_de': torch.LongTensor(ac),
+        }
+
+        label = torch.FloatTensor(label)
+
+        return feat, label
+
+
+class CustomTestDataset3(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTestDataset3, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
+        # self.user_ids = [x for x in df['user_id'].unique()]
+        self.df = df
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
+
+        row_id = row['row_id']
+
+        seq_list = dh.load(f'../data/seq2/row_{int(row_id)}.pkl')
+
+        feat = {
+            'in_ex': torch.LongTensor(seq_list[0]),
+            'in_tc': torch.LongTensor(seq_list[1]),
+            'in_cat': torch.LongTensor(seq_list[3]),
+            'in_de': torch.LongTensor(seq_list[4]),
         }
 
         if const.TARGET_COLS[0] in self.df.columns:

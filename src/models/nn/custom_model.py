@@ -4,7 +4,7 @@ import layer
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 
-from . import mlp, tabnet, transformer, saint
+from . import mlp, tabnet, transformer, saint, saint_v2
 
 sys.path.append('../src')
 
@@ -16,6 +16,7 @@ model_encoder = {
 
     'transformer_public': transformer.SAKTModel,
     'transformer_saint': saint.SAINT,
+    'transformer_saint_v2': saint_v2.SAINT,
 }
 
 

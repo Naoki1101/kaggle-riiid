@@ -11,11 +11,11 @@ common:
         notebook: False
 
 model:
-    backbone: transformer_saint
+    backbone: transformer_saint_v2
     n_classes: &class 1
-    epochs: &epochs 30
+    epochs: &epochs 10
     params:
-        dim_model: 128
+        dim_model: 256
         num_en: 2
         num_de: 2
         heads_en: 8
@@ -29,7 +29,7 @@ model:
 
 data:
     train:
-        dataset_type: CustomTrainDataset2
+        dataset_type: CustomTrainDataset3
         is_train: True
         params:
             n_skill: *n_skill
@@ -40,7 +40,7 @@ data:
             num_workers: 4
         transforms:
     valid:
-        dataset_type: CustomTestDataset2
+        dataset_type: CustomTestDataset3
         is_train: False
         params:
             n_skill: *n_skill
@@ -51,7 +51,7 @@ data:
             num_workers: 4
         transforms:
     test:
-        dataset_type: CustomTestDataset2
+        dataset_type: CustomTestDataset3
         is_train: False
         params:
             n_skill: *n_skill

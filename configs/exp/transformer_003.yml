@@ -5,7 +5,7 @@ common:
         params: {}
     drop:
       - lecture_idx
-    debug: False
+    debug: True
     kaggle:
         data: False
         notebook: False
