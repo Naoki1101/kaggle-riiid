@@ -65,7 +65,8 @@ cd ../src
 # python train_nn.py -m 'transformer_002' -c 'test saint model'
 # python train_nn.py -m 'transformer_003' -c 'dim_model=256'
 # python train_nn.py -m 'transformer_004' -c 'num_en, num_de=3'
-python train_nn.py -m 'transformer_005' -c 'saint_v2, pos_embed_with_task'
+# python train_nn.py -m 'transformer_005' -c 'dim_model=512'
+python train_nn.py -m 'transformer_006' -c 'saint_v2, add difftime, prior_elapsed'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'

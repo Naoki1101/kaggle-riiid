@@ -259,12 +259,15 @@ class CustomTrainDataset3(Dataset):
 
     def __getitem__(self, index):
         user_id = self.user_ids[index]
-        q_, qa_, qc_, _, qp_ = self.samples[user_id]
+        q_, qa_, qt_, qe_, qp_ = self.samples[user_id]
+        qt_ = qt_ // 600_000   # ms -> h
+        qe_ = qe_ // 1_000   # ms -> s
         seq_len = len(q_)
 
         q = np.zeros(self.max_seq, dtype=int)
         qa = np.zeros(self.max_seq, dtype=int)
-        qc = np.zeros(self.max_seq, dtype=int)
+        qt = np.zeros(self.max_seq, dtype=int)
+        qe = np.zeros(self.max_seq, dtype=int)
         qp = np.zeros(self.max_seq, dtype=int)
 
         if seq_len >= self.max_seq:
@@ -273,12 +276,14 @@ class CustomTrainDataset3(Dataset):
                 end = start + self.max_seq
                 q[:] = q_[start: end]
                 qa[:] = qa_[start: end]
-                qc[:] = qc_[start: end]
+                qt[:] = qt_[start: end]
+                qe[:] = qe_[start: end]
                 qp[:] = qp_[start: end]
             else:
                 q[:] = q_[-self.max_seq:]
                 qa[:] = qa_[-self.max_seq:]
-                qc[:] = qa_[-self.max_seq:]
+                qt[:] = qt_[-self.max_seq:]
+                qe[:] = qe_[-self.max_seq:]
                 qp[:] = qp_[-self.max_seq:]
         else:
             if random.random() > 0.1:
@@ -287,23 +292,32 @@ class CustomTrainDataset3(Dataset):
                 seq_len = end - start
                 q[-seq_len:] = q_[0: seq_len]
                 qa[-seq_len:] = qa_[0: seq_len]
-                qc[-seq_len:] = qc_[0: seq_len]
+                qt[-seq_len:] = qt_[0: seq_len]
+                qe[-seq_len:] = qe_[0: seq_len]
                 qp[-seq_len:] = qp_[0: seq_len]
             else:
                 q[-seq_len:] = q_
                 qa[-seq_len:] = qa_
-                qc[-seq_len:] = qc_
+                qt[-seq_len:] = qt_
+                qe[-seq_len:] = qe_
                 qp[-seq_len:] = qp_
 
         target_id = q[1:].copy()
         label = qa[1:].copy()
-        task_container_id = qc[1:].copy()
         part = qp[1:].copy()
         ac = qa[:-1].copy()
 
+        difftime = np.diff(qt.copy())
+        difftime = np.where(difftime > 1_008, 1_008, difftime)
+
+        prior_elapsed = qe[1:].copy()
+        prior_elapsed = np.where(np.isnan(prior_elapsed), 0, prior_elapsed)
+        prior_elapsed = np.where(difftime > 300, 300, prior_elapsed)
+
         feat = {
             'in_ex': torch.LongTensor(target_id),
-            'in_tc': torch.LongTensor(task_container_id),
+            'in_dt': torch.LongTensor(difftime),
+            'in_el': torch.LongTensor(prior_elapsed),
             'in_cat': torch.LongTensor(part),
             'in_de': torch.LongTensor(ac),
         }
@@ -330,11 +344,19 @@ class CustomTestDataset3(Dataset):
 
         row_id = row['row_id']
 
-        seq_list = dh.load(f'../data/seq2/row_{int(row_id)}.pkl')
+        seq_list = dh.load(f'../data/seq3/row_{int(row_id)}.pkl')
+
+        difftime = seq_list[1] // 600_000
+        difftime = np.where(difftime > 1_008, 1_008, difftime)
+
+        prior_elapsed = seq_list[2]
+        prior_elapsed = np.where(np.isnan(prior_elapsed), 0, prior_elapsed)
+        prior_elapsed = np.where(prior_elapsed > 300, 300, prior_elapsed)
 
         feat = {
             'in_ex': torch.LongTensor(seq_list[0]),
-            'in_tc': torch.LongTensor(seq_list[1]),
+            'in_dt': torch.LongTensor(difftime),
+            'in_el': torch.LongTensor(prior_elapsed),
             'in_cat': torch.LongTensor(seq_list[3]),
             'in_de': torch.LongTensor(seq_list[4]),
         }
