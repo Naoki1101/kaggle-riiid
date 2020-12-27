@@ -70,7 +70,9 @@ cd ../src
 # python train_nn.py -m 'transformer_007' -c '006, lr=0.01'
 # python train_nn.py -m 'transformer_008' -c '006, lr=0.0001'
 # python train_nn.py -m 'transformer_009' -c 'saint_v3'
-python train_nn.py -m 'transformer_010' -c '003, seq=120'
+# python train_nn.py -m 'transformer_010' -c '003, seq=120'
+python train_nn.py -m 'transformer_011' -c '003, seq=150'
+python train_nn.py -m 'transformer_012' -c '010, epoch=50'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
