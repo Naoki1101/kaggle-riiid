@@ -59,7 +59,7 @@ def main():
 
         questions_df = pd.read_csv(const.INPUT_DATA_DIR / 'questions.csv')
         q2p = dict(questions_df[['question_id', 'part']].values)
-        train_df['part'] = train_df['content_id'].map(q2p) - 1
+        train_df['part'] = train_df['content_id'].map(q2p)
 
         # train_df['user_count'] = train_df.groupby('user_id').cumcount()
 

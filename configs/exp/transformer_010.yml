@@ -23,7 +23,7 @@ model:
         total_ex: &n_skill 13_523
         total_cat: 7
         total_in: 2
-        seq_len: &max_seq 101
+        seq_len: &max_seq 121
     multi_gpu: True
     head:
 

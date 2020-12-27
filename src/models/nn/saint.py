@@ -29,7 +29,7 @@ class Encoder_block(nn.Module):
         super().__init__()
         self.seq_len = seq_len - 1
         self.embd_ex = nn.Embedding(total_ex, embedding_dim=dim_model)
-        self.embd_cat = nn.Embedding(total_cat, embedding_dim=dim_model)
+        self.embd_cat = nn.Embedding(total_cat + 1, embedding_dim=dim_model)
         self.embd_pos = nn.Embedding(seq_len, embedding_dim=dim_model)
 
         self.multi_en = nn.MultiheadAttention(embed_dim=dim_model, num_heads=heads_en)

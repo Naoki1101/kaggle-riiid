@@ -11,7 +11,7 @@ common:
         notebook: False
 
 model:
-    backbone: transformer_saint
+    backbone: transformer_saint_v3
     n_classes: &class 1
     epochs: &epochs 30
     params:
@@ -23,42 +23,43 @@ model:
         total_ex: &n_skill 13_523
         total_cat: 7
         total_in: 2
+        total_el: 300
         seq_len: &max_seq 101
     multi_gpu: True
     head:
 
 data:
     train:
-        dataset_type: CustomTrainDataset2
+        dataset_type: CustomTrainDataset4
         is_train: True
         params:
             n_skill: *n_skill
             max_seq: *max_seq
         loader:
             shuffle: True
-            batch_size: 512
+            batch_size: 1024
             num_workers: 4
         transforms:
     valid:
-        dataset_type: CustomTestDataset2
+        dataset_type: CustomTestDataset4
         is_train: False
         params:
             n_skill: *n_skill
             max_seq: *max_seq
         loader:
             shuffle: False
-            batch_size: 512
+            batch_size: 2048
             num_workers: 4
         transforms:
     test:
-        dataset_type: CustomTestDataset2
+        dataset_type: CustomTestDataset4
         is_train: False
         params:
             n_skill: *n_skill
             max_seq: *max_seq
         loader:
             shuffle: False
-            batch_size: 512
+            batch_size: 1024
             num_workers: 4
         transforms:
 
@@ -69,7 +70,7 @@ loss:
 optimizer:
     name: Adam
     params:
-        lr: 0.001
+        lr: 0.0001
 
 scheduler:
     name: CosineAnnealingLR
