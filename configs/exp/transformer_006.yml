@@ -5,7 +5,7 @@ common:
         params: {}
     drop:
       - lecture_idx
-    debug: False
+    debug: True
     kaggle:
         data: False
         notebook: False
@@ -13,7 +13,7 @@ common:
 model:
     backbone: transformer_saint_v2
     n_classes: &class 1
-    epochs: &epochs 30
+    epochs: &epochs 1
     params:
         dim_model: 256
         num_en: 2
@@ -23,8 +23,6 @@ model:
         total_ex: &n_skill 13_523
         total_cat: 7
         total_in: 2
-        total_dt: 1_008
-        total_el: 300
         seq_len: &max_seq 101
     multi_gpu: True
     head:

@@ -24,7 +24,6 @@ model:
         total_cat: 7
         total_in: 2
         total_dt: 1_008
-        total_el: 300
         seq_len: &max_seq 101
     multi_gpu: True
     head:

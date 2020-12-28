@@ -72,7 +72,7 @@ def main():
     train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
     questions_df = pd.read_csv('../data/input/questions.csv')
     q2p = dict(questions_df[['question_id', 'part']].values)
-    train_df['part'] = train_df['content_id'].map(q2p) - 1
+    train_df['part'] = train_df['content_id'].map(q2p)
 
     val_idx = np.load('../data/processed/cv1_valid.npy')
     train_df['is_val'] = False

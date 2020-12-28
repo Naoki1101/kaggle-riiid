@@ -48,7 +48,7 @@ def get_features(df):
     user_timestamp_dict = {}
     user_part_dict = {}
     user_target_dict = {}
-    add_user_feats(df, user_content_dict, user_task_dict, user_timestamp_dict, 
+    add_user_feats(df, user_content_dict, user_task_dict, user_timestamp_dict,
                    user_part_dict, user_target_dict)
 
 
