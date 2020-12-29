@@ -25,7 +25,7 @@ class Encoder_block(nn.Module):
     O = SkipConct(FFN(LayerNorm(M)))
     """
 
-    def __init__(self, dim_model, heads_en, total_ex, total_cat, total_dt, seq_len):
+    def __init__(self, dim_model, heads_en, total_ex, total_cat, seq_len):
         super().__init__()
         self.seq_len = seq_len - 1
         self.embd_ex = nn.Embedding(total_ex, embedding_dim=dim_model)
@@ -44,10 +44,13 @@ class Encoder_block(nn.Module):
         if first_block:
             in_ex = self.embd_ex(in_ex)
             in_cat = self.embd_cat(in_cat)
+
+            in_dt = in_dt.unsqueeze(-1)
             in_dt = self.dt_fc(in_dt)
+
             # in_pos = self.embd_pos( in_pos )
             # combining the embedings
-            out = in_ex + in_cat + in_dt   # + in_pos
+            out = in_ex + in_cat + in_dt  # + in_pos
         else:
             out = in_ex
 
@@ -89,18 +92,22 @@ class Decoder_block(nn.Module):
         self.multi_de1 = nn.MultiheadAttention(embed_dim=dim_model, num_heads=heads_de)
         self.multi_de2 = nn.MultiheadAttention(embed_dim=dim_model, num_heads=heads_de)
         self.ffn_en = Feed_Forward_block(dim_model)
+        self.el_fc = nn.Linear(1, dim_model, bias=False)
 
         self.layer_norm1 = nn.LayerNorm(dim_model)
         self.layer_norm2 = nn.LayerNorm(dim_model)
         self.layer_norm3 = nn.LayerNorm(dim_model)
 
-    def forward(self, in_in, en_out, first_block=True):
+    def forward(self, in_in, in_el, en_out, first_block=True):
         device = in_in.device
 
         if first_block:
             in_in = self.embd_in(in_in)
 
-            out = in_in
+            in_el = in_el.unsqueeze(-1)
+            in_el = self.el_fc(in_el)
+
+            out = in_in + in_el
         else:
             out = in_in
 
@@ -144,18 +151,17 @@ def get_mask(seq_len, device):
 
 def get_pos(seq_len, device):
     # use sine positional embeddinds
-    # return torch.arange(seq_len, device=device).unsqueeze(0)
     return torch.arange(seq_len, device=device).unsqueeze(0)
 
 
 class SAINT(nn.Module):
-    def __init__(self, dim_model, num_en, num_de, heads_en, total_ex, total_cat, total_in, total_dt, heads_de, seq_len):
+    def __init__(self, dim_model, num_en, num_de, heads_en, total_ex, total_cat, total_in, heads_de, seq_len):
         super().__init__()
 
         self.num_en = num_en
         self.num_de = num_de
 
-        self.encoder = get_clones(Encoder_block(dim_model, heads_en, total_ex, total_cat, total_dt, seq_len), num_en)
+        self.encoder = get_clones(Encoder_block(dim_model, heads_en, total_ex, total_cat, seq_len), num_en)
         self.decoder = get_clones(Decoder_block(dim_model, total_in, heads_de, seq_len), num_de)
 
         self.out = nn.Linear(in_features=dim_model, out_features=1)
@@ -163,6 +169,7 @@ class SAINT(nn.Module):
     def forward(self, feat):
         in_ex = feat['in_ex']
         in_dt = feat['in_dt']
+        in_el = feat['in_el']
         in_cat = feat['in_cat']
         in_in = feat['in_de']
 
@@ -177,7 +184,7 @@ class SAINT(nn.Module):
         for x in range(self.num_de):
             if x >= 1:
                 first_block = False
-            in_in = self.decoder[x](in_in, en_out=in_ex, first_block=first_block)
+            in_in = self.decoder[x](in_in, in_el, en_out=in_ex, first_block=first_block)
 
         # in_in = torch.sigmoid(self.out(in_in))
         in_in = self.out(in_in)

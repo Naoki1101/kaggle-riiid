@@ -417,12 +417,14 @@ class CustomTrainDataset4(Dataset):
 
     def __getitem__(self, index):
         user_id = self.user_ids[index]
-        q_, qa_, _, qe_, qp_ = self.samples[user_id]
-        qe_ = qe_ // 1_000   # ms -> s
+        q_, qa_, qt_, qe_, qp_ = self.samples[user_id]
+        qt_ = qt_ / 60_000.   # ms -> m
+        qe_ = qe_ / 1_000.   # ms -> s
         seq_len = len(q_)
 
         q = np.zeros(self.max_seq, dtype=int)
         qa = np.zeros(self.max_seq, dtype=int)
+        qt = np.zeros(self.max_seq, dtype=int)
         qe = np.zeros(self.max_seq, dtype=int)
         qp = np.zeros(self.max_seq, dtype=int)
 
@@ -432,11 +434,13 @@ class CustomTrainDataset4(Dataset):
                 end = start + self.max_seq
                 q[:] = q_[start: end]
                 qa[:] = qa_[start: end]
+                qt[:] = qt_[start: end]
                 qe[:] = qe_[start: end]
                 qp[:] = qp_[start: end]
             else:
                 q[:] = q_[-self.max_seq:]
                 qa[:] = qa_[-self.max_seq:]
+                qt[:] = qt_[-self.max_seq:]
                 qe[:] = qe_[-self.max_seq:]
                 qp[:] = qp_[-self.max_seq:]
         else:
@@ -446,11 +450,13 @@ class CustomTrainDataset4(Dataset):
                 seq_len = end - start
                 q[-seq_len:] = q_[0: seq_len]
                 qa[-seq_len:] = qa_[0: seq_len]
+                qt[-seq_len:] = qt_[0: seq_len]
                 qe[-seq_len:] = qe_[0: seq_len]
                 qp[-seq_len:] = qp_[0: seq_len]
             else:
                 q[-seq_len:] = q_
                 qa[-seq_len:] = qa_
+                qt[-seq_len:] = qt_
                 qe[-seq_len:] = qe_
                 qp[-seq_len:] = qp_
 
@@ -459,13 +465,18 @@ class CustomTrainDataset4(Dataset):
         part = qp[1:].copy()
         ac = qa[:-1].copy()
 
+        difftime = np.diff(qt.copy())
+        difftime = np.where(difftime < 0, 300, difftime)
+        difftime = np.log1p(difftime)
+
         prior_elapsed = qe[1:].copy()
-        prior_elapsed = np.where(np.isnan(prior_elapsed), 0, prior_elapsed)
-        prior_elapsed = np.where(prior_elapsed > 300, 300, prior_elapsed)
+        prior_elapsed = np.log1p(prior_elapsed)
+        prior_elapsed = np.where(np.isnan(prior_elapsed), np.log1p(21), prior_elapsed)
 
         feat = {
             'in_ex': torch.LongTensor(target_id),
-            'in_el': torch.LongTensor(prior_elapsed),
+            'in_dt': torch.FloatTensor(difftime),
+            'in_el': torch.FloatTensor(prior_elapsed),
             'in_cat': torch.LongTensor(part),
             'in_de': torch.LongTensor(ac),
         }
@@ -481,7 +492,6 @@ class CustomTestDataset4(Dataset):
         self.max_seq = cfg.params.max_seq
         self.n_skill = cfg.params.n_skill
         self.samples = samples
-        # self.user_ids = [x for x in df['user_id'].unique()]
         self.df = df
 
     def __len__(self):
@@ -494,13 +504,18 @@ class CustomTestDataset4(Dataset):
 
         seq_list = dh.load(f'../data/seq3/row_{int(row_id)}.pkl')
 
-        prior_elapsed = seq_list[2]
-        prior_elapsed = np.where(np.isnan(prior_elapsed), 0, prior_elapsed)
-        prior_elapsed = np.where(prior_elapsed > 300, 300, prior_elapsed)
+        difftime = seq_list[1] / 60_000.   # ms -> m
+        difftime = np.where(difftime < 0, 300, difftime)
+        difftime = np.log1p(difftime)
+
+        prior_elapsed = seq_list[2] / 1_000.
+        prior_elapsed = np.log1p(prior_elapsed)
+        prior_elapsed = np.where(np.isnan(prior_elapsed), np.log1p(21), prior_elapsed)
 
         feat = {
             'in_ex': torch.LongTensor(seq_list[0]),
-            'in_el': torch.LongTensor(prior_elapsed),
+            'in_dt': torch.FloatTensor(difftime),
+            'in_el': torch.FloatTensor(prior_elapsed),
             'in_cat': torch.LongTensor(seq_list[3]),
             'in_de': torch.LongTensor(seq_list[4]),
         }
