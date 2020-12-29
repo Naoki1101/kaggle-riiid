@@ -22,7 +22,7 @@ class Mlp2(nn.Module):
     def __init__(self, dim_input, e_dim, e_fc_dim):
         super().__init__()
         self.fc = nn.Linear(dim_input, 1000)
-        self.embedding = nn.Embedding(13523, e_dim)
+        self.embedding = nn.Embedding(13_523, e_dim)
         self.emb_fc = nn.Linear(e_dim, e_fc_dim)
 
     def forward(self, feats):

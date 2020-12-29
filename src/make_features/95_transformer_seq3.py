@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
 
 sys.path.append('../src')
 import const
@@ -65,7 +66,11 @@ def update_dict(user_id, user_dict, v):
 
 
 def save_seq(row_id, seq_list):
-    dh.save(f'../data/seq3/row_{int(row_id)}.pkl', seq_list)
+    seq_dir = Path('../data/seq3')
+    if not seq_dir.exists():
+        seq_dir.mkdir(exist_ok=True)
+
+    dh.save(seq_dir / f'row_{int(row_id)}.pkl', seq_list)
 
 
 def main():

@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
 
 sys.path.append('../src')
 import const
@@ -54,14 +55,18 @@ def update_dict(user_id, user_dict, v):
 
 
 def save_seq(row_id, seq_list):
-    dh.save(f'../data/seq/row_{int(row_id)}.pkl', seq_list)
+    seq_dir = Path('../data/seq')
+    if not seq_dir.exists():
+        seq_dir.mkdir(exist_ok=True)
+
+    dh.save(seq_dir / f'row_{int(row_id)}.pkl', seq_list)
 
 
 def main():
     train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
     questions_df = pd.read_csv('../data/input/questions.csv')
     q2p = dict(questions_df[['question_id', 'part']].values)
-    train_df['part'] = train_df['content_id'].map(q2p) - 1
+    train_df['part'] = train_df['content_id'].map(q2p)
 
     val_idx = np.load('../data/processed/cv1_valid.npy')
     train_df['is_val'] = False

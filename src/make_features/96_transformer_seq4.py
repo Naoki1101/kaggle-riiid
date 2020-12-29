@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
 
 sys.path.append('../src')
 import const
@@ -59,7 +60,11 @@ def update_dict(user_id, user_dict, v):
 
 
 def save_seq(row_id, seq_list):
-    dh.save(f'../data/seq4/row_{int(row_id)}.pkl', seq_list)
+    seq_dir = Path('../data/seq4')
+    if not seq_dir.exists():
+        seq_dir.mkdir(exist_ok=True)
+
+    dh.save(seq_dir / f'row_{int(row_id)}.pkl', seq_list)
 
 
 def main():
@@ -72,7 +77,7 @@ def main():
     q2p = dict(questions_df[['question_id', 'part']].values)
     l2p = dict(lectures_df[['lecture_id', 'part']].values)
     q2p.update(l2p)
-    train_df['part'] = train_df['content_id'].map(q2p) - 1
+    train_df['part'] = train_df['content_id'].map(q2p)
 
     l2t = dict(lectures_df[['lecture_id', 'type_of_id']].values)
     train_df['type_of_id'] = train_df['content_id'].map(l2t).fillna(4)

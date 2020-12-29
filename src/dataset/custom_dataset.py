@@ -265,7 +265,7 @@ class CustomTrainDataset3(Dataset):
     def __getitem__(self, index):
         user_id = self.user_ids[index]
         q_, qa_, qt_, _, qp_ = self.samples[user_id]
-        qt_ = qt_ // 60_000   # ms -> m
+        qt_ = qt_ / 60_000   # ms -> m
         # qe_ = qe_ // 1_000   # ms -> s
         seq_len = len(q_)
 
@@ -313,14 +313,17 @@ class CustomTrainDataset3(Dataset):
         ac = qa[:-1].copy()
 
         difftime = np.diff(qt.copy())
-        over10m_idx = np.where((difftime > 10) & (difftime <= 1_440))[0]
-        over1d_idx = np.where(difftime > 1_440)[0]
-        if len(over10m_idx) > 0:
-            difftime[over10m_idx] = (difftime[over10m_idx] // 10) * 10
-        if len(over1d_idx):
-            difftime[over1d_idx] = 1_440
+        difftime = np.where(difftime < 0, 0, difftime)
+        difftime = np.log1p(difftime)
 
-        difftime = difftime / 1_440
+        # over10m_idx = np.where((difftime > 10) & (difftime <= 1_440))[0]
+        # over1d_idx = np.where(difftime > 1_440)[0]
+        # if len(over10m_idx) > 0:
+        #     difftime[over10m_idx] = (difftime[over10m_idx] // 10) * 10
+        # if len(over1d_idx) > 0:
+        #     difftime[over1d_idx] = 1_440
+
+        # difftime = difftime / 1_440.0
         # difftime = np.where(difftime > 1_008, 1_008, difftime) / 1_008
 
         # prior_elapsed = qe[1:].copy()
@@ -359,15 +362,18 @@ class CustomTestDataset3(Dataset):
 
         seq_list = dh.load(f'../data/seq3/row_{int(row_id)}.pkl')
 
-        difftime = seq_list[1] // 60_000   # ms -> m
-        over10m_idx = np.where((difftime > 10) & (difftime <= 1_440))[0]
-        over1d_idx = np.where(difftime > 1_440)[0]
-        if len(over10m_idx) > 0:
-            difftime[over10m_idx] = (difftime[over10m_idx] // 10) * 10
-        if len(over1d_idx) > 0:
-            difftime[over1d_idx] = 1_440
+        difftime = seq_list[1] / 60_000   # ms -> m
+        difftime = np.where(difftime < 0, 0, difftime)
+        difftime = np.log1p(difftime)
 
-        difftime = difftime / 1_440
+        # over10m_idx = np.where((difftime > 10) & (difftime <= 1_440))[0]
+        # over1d_idx = np.where(difftime > 1_440)[0]
+        # if len(over10m_idx) > 0:
+        #     difftime[over10m_idx] = (difftime[over10m_idx] // 10) * 10
+        # if len(over1d_idx) > 0:
+        #     difftime[over1d_idx] = 1_440
+
+        # difftime = difftime / 1_440
         # difftime = np.where(difftime > 1_008, 1_008, difftime) / 1_008
 
         # prior_elapsed = seq_list[2]

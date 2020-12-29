@@ -1,11 +1,11 @@
 import sys
-import random
+# import random
 import numpy as np
 import pandas as pd
 
 sys.path.append('../src')
 import const
-from utils import seed_everything
+# from utils import seed_everything
 
 val_size = 2_500_000
 
@@ -32,8 +32,14 @@ def main():
     # sorted_idx = train_df.index
     # valid_cv1_idx = sorted_idx[-val_size:].values
 
-    cv1_valid = pd.read_pickle('../folds/cv1_valid.pickle')
-    valid_row_id = cv1_valid['row_id']
+    ## tito validation
+    # cv1_valid = pd.read_pickle('../folds/cv1_valid.pickle')
+    # valid_row_id = cv1_valid['row_id']
+    # valid_cv1_idx = train_df[train_df['row_id'].isin(valid_row_id)].index.values
+
+    # myaun validation
+    folds_df = pd.read_feather('../data/team/train_folds_vlatest_ALL_2p5M_v2_46.feather')
+    valid_row_id = np.sort(folds_df[folds_df['val'] == 1]['row_id'].values)
     valid_cv1_idx = train_df[train_df['row_id'].isin(valid_row_id)].index.values
 
     np.save('../data/processed/cv1_valid.npy', valid_cv1_idx)

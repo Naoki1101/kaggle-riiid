@@ -5,7 +5,7 @@ common:
         params: {}
     drop:
       - lecture_idx
-    debug: True
+    debug: False
     kaggle:
         data: False
         notebook: False
@@ -13,10 +13,10 @@ common:
 model:
     backbone: transformer_saint_v2
     n_classes: &class 1
-    epochs: &epochs 1
+    epochs: &epochs 30
     params:
         dim_model: 256
-        num_en: 2
+        num_en: 3
         num_de: 2
         heads_en: 8
         heads_de: 8

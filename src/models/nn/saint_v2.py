@@ -45,18 +45,18 @@ class Encoder_block(nn.Module):
             in_ex = self.embd_ex(in_ex)
             in_cat = self.embd_cat(in_cat)
 
+            in_dt = in_dt.unsqueeze(-1)
+            in_dt = self.dt_fc(in_dt)
+
             # in_pos = self.embd_pos( in_pos )
             # combining the embedings
-            out = in_ex + in_cat  # + in_pos
+            out = in_ex + in_cat + in_dt  # + in_pos
         else:
             out = in_ex
 
         in_pos = get_pos(self.seq_len, device)
         in_pos = self.embd_pos(in_pos)
-
-        in_dt = in_dt.unsqueeze(-1)
-        in_dt = self.dt_fc(in_dt)
-        out = out + in_pos + in_dt
+        out = out + in_pos
 
         out = out.permute(1, 0, 2)
 
