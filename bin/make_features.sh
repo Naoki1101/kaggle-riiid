@@ -46,11 +46,12 @@ cd ../src
 # python make_features/66_task_container_id.py
 # python make_features/67_lag_shift.py
 
-# python make_features/91_transformer_current_feats.py
-# python make_features/92_transformer_history_feats.py
-python make_features/93_transformer_seq.py
-python make_features/94_transformer_seq2.py
-python make_features/95_transformer_seq3.py
-python make_features/96_transformer_seq4.py
-python make_features/97_transformer_seq5.py
-python make_features/98_transformer_seq6.py
+# python make_features/81_transformer_current_feats.py
+# python make_features/82_transformer_history_feats.py
+# python make_features/83_transformer_seq.py
+# python make_features/84_transformer_seq2.py
+# python make_features/85_transformer_seq3.py
+# python make_features/86_transformer_seq4.py
+# python make_features/87_transformer_seq5.py
+# python make_features/88_transformer_seq6.py
+python make_features/89_transformer_seq7.py
