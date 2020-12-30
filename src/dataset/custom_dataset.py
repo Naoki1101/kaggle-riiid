@@ -3,6 +3,7 @@ import sys
 import random
 
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
@@ -516,6 +517,172 @@ class CustomTestDataset4(Dataset):
             'in_ex': torch.LongTensor(seq_list[0]),
             'in_dt': torch.FloatTensor(difftime),
             'in_el': torch.FloatTensor(prior_elapsed),
+            'in_cat': torch.LongTensor(seq_list[3]),
+            'in_de': torch.LongTensor(seq_list[4]),
+        }
+
+        if const.TARGET_COLS[0] in self.df.columns:
+            label = np.append(seq_list[4][1:], [row[const.TARGET_COLS[0]]])
+            label = torch.FloatTensor(label)
+            return feat, label
+        else:
+            return feat
+
+
+# =================================================================================
+# SAINT v4
+class CustomTrainDataset5(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTrainDataset5, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
+
+        questions_df = pd.read_csv('../data/input/questions.csv')
+        questions_df['tags'] = questions_df['tags'].fillna(0)
+        questions_df['tag_list'] = questions_df['tags'].apply(lambda tags: [int(tag) for tag in str(tags).split(' ')])
+        questions_df['tag_list'] = questions_df['tag_list'].apply(lambda x: [0] * (6 - len(x)) + x)
+        self.q2tg = dict(questions_df[['question_id', 'tag_list']].values)
+
+        self.user_ids = []
+        for user_id in samples.index:
+            q, _, _, _, _ = samples[user_id]
+            if len(q) < 2:
+                continue
+            self.user_ids.append(user_id)
+
+    def __len__(self):
+        return len(self.user_ids)
+
+    def __getitem__(self, index):
+        user_id = self.user_ids[index]
+        q_, qa_, qt_, qe_, qp_ = self.samples[user_id]
+        qt_ = qt_ / 60_000.   # ms -> m
+        qe_ = qe_ / 1_000.   # ms -> s
+        seq_len = len(q_)
+
+        q = np.zeros(self.max_seq, dtype=int)
+        qa = np.zeros(self.max_seq, dtype=int)
+        qt = np.zeros(self.max_seq, dtype=int)
+        qe = np.zeros(self.max_seq, dtype=int)
+        qp = np.zeros(self.max_seq, dtype=int)
+        qtg = np.zeros((self.max_seq - 1, 6), dtype=int)
+
+        if seq_len >= self.max_seq:
+            if random.random() > 0.1:
+                start = random.randint(0, (seq_len - self.max_seq))
+                end = start + self.max_seq
+                q[:] = q_[start: end]
+                qa[:] = qa_[start: end]
+                qt[:] = qt_[start: end]
+                qe[:] = qe_[start: end]
+                qp[:] = qp_[start: end]
+            else:
+                q[:] = q_[-self.max_seq:]
+                qa[:] = qa_[-self.max_seq:]
+                qt[:] = qt_[-self.max_seq:]
+                qe[:] = qe_[-self.max_seq:]
+                qp[:] = qp_[-self.max_seq:]
+        else:
+            if random.random() > 0.1:
+                start = 0
+                end = random.randint(2, seq_len)
+                seq_len = end - start
+                q[-seq_len:] = q_[0: seq_len]
+                qa[-seq_len:] = qa_[0: seq_len]
+                qt[-seq_len:] = qt_[0: seq_len]
+                qe[-seq_len:] = qe_[0: seq_len]
+                qp[-seq_len:] = qp_[0: seq_len]
+            else:
+                q[-seq_len:] = q_
+                qa[-seq_len:] = qa_
+                qt[-seq_len:] = qt_
+                qe[-seq_len:] = qe_
+                qp[-seq_len:] = qp_
+
+        target_id = q[1:].copy()
+        label = qa[1:].copy()
+        part = qp[1:].copy()
+        ac = qa[:-1].copy()
+
+        difftime = np.diff(qt.copy())
+        difftime = np.where(difftime < 0, 300, difftime)
+        difftime = np.log1p(difftime)
+
+        prior_elapsed = qe[1:].copy()
+        prior_elapsed = np.log1p(prior_elapsed)
+        prior_elapsed = np.where(np.isnan(prior_elapsed), np.log1p(21), prior_elapsed)
+
+        prior_cid = 0
+        for idx, cid in enumerate(target_id):
+            if cid == 0 and prior_cid == 0:
+                qtg[idx, :] = np.zeros(6) + 188
+            else:
+                qtg[idx, :] = self.q2tg[cid]
+
+            prior_cid = cid
+
+        feat = {
+            'in_ex': torch.LongTensor(target_id),
+            'in_dt': torch.FloatTensor(difftime),
+            'in_el': torch.FloatTensor(prior_elapsed),
+            'in_tag': torch.LongTensor(qtg),
+            'in_cat': torch.LongTensor(part),
+            'in_de': torch.LongTensor(ac),
+        }
+
+        label = torch.FloatTensor(label)
+
+        return feat, label
+
+
+class CustomTestDataset5(Dataset):
+    def __init__(self, samples, df, cfg=None):
+        super(CustomTestDataset5, self).__init__()
+        self.max_seq = cfg.params.max_seq
+        self.n_skill = cfg.params.n_skill
+        self.samples = samples
+        self.df = df
+
+        questions_df = pd.read_csv('../data/input/questions.csv')
+        questions_df['tags'] = questions_df['tags'].fillna(0)
+        questions_df['tag_list'] = questions_df['tags'].apply(lambda tags: [int(tag) for tag in str(tags).split(' ')])
+        questions_df['tag_list'] = questions_df['tag_list'].apply(lambda x: [0] * (6 - len(x)) + x)
+        self.q2tg = dict(questions_df[['question_id', 'tag_list']].values)
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
+
+        row_id = row['row_id']
+
+        seq_list = dh.load(f'../data/seq3/row_{int(row_id)}.pkl')
+
+        difftime = seq_list[1] / 60_000.   # ms -> m
+        difftime = np.where(difftime < 0, 300, difftime)
+        difftime = np.log1p(difftime)
+
+        prior_elapsed = seq_list[2] / 1_000.
+        prior_elapsed = np.log1p(prior_elapsed)
+        prior_elapsed = np.where(np.isnan(prior_elapsed), np.log1p(21), prior_elapsed)
+
+        qtg = np.zeros((self.max_seq - 1, 6))
+        prior_cid = 0
+        for idx, cid in enumerate(seq_list[0]):
+            if cid == 0 and prior_cid == 0:
+                qtg[idx, :] = np.zeros(6) + 188
+            else:
+                qtg[idx, :] = self.q2tg[cid]
+
+            prior_cid = cid
+
+        feat = {
+            'in_ex': torch.LongTensor(seq_list[0]),
+            'in_dt': torch.FloatTensor(difftime),
+            'in_el': torch.FloatTensor(prior_elapsed),
+            'in_tag': torch.LongTensor(qtg),
             'in_cat': torch.LongTensor(seq_list[3]),
             'in_de': torch.LongTensor(seq_list[4]),
         }
