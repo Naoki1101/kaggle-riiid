@@ -54,4 +54,5 @@ cd ../src
 # python make_features/86_transformer_seq4.py
 # python make_features/87_transformer_seq5.py
 # python make_features/88_transformer_seq6.py
-python make_features/89_transformer_seq7.py
+# python make_features/89_transformer_seq7.py
+# python make_features/90_transformer_seq8.py

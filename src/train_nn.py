@@ -61,6 +61,8 @@ def main():
         q2p = dict(questions_df[['question_id', 'part']].values)
         train_df['part'] = train_df['content_id'].map(q2p)
 
+        train_df['prior_question_had_explanation'] = train_df['prior_question_had_explanation'].astype(float)
+
         # train_df['user_count'] = train_df.groupby('user_id').cumcount()
 
     with t.timer('make folds'):

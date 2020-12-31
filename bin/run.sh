@@ -76,7 +76,8 @@ cd ../src
 # python train_nn.py -m 'transformer_013' -c 'saint_v3'
 # python train_nn.py -m 'transformer_014' -c '013, AdamW'
 # python train_nn.py -m 'transformer_015' -c '013, batch_size=256'
-python train_nn.py -m 'transformer_016' -c 'saint_v4'
+# python train_nn.py -m 'transformer_016' -c 'saint_v4'
+python train_nn.py -m 'transformer_017' -c 'saint_v5, add prior_exp'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'

@@ -126,13 +126,15 @@ class NNTrainer:
             val_y = target_df[self.fold_df[col] > 0].values
 
             if 'transformer' in self.cfg.model.backbone:
-                usecols = ['user_id', 'content_id', 'timestamp', 'prior_question_elapsed_time', 'part', 'answered_correctly']
+                usecols = ['user_id', 'content_id', 'timestamp', 'prior_question_elapsed_time', 'prior_question_had_explanation',
+                           'part', 'answered_correctly']
                 group = (trn_x[usecols]
                          .groupby('user_id')
                          .apply(lambda r: (r['content_id'].values,
                                            r['answered_correctly'].values,
                                            r['timestamp'].values,
                                            r['prior_question_elapsed_time'].values,
+                                           r['prior_question_had_explanation'].values,
                                            r['part'].values)))
 
                 train_loader = factory.get_transformer_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
