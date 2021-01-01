@@ -127,16 +127,18 @@ class NNTrainer:
 
             if 'transformer' in self.cfg.model.backbone:
                 usecols = ['user_id', 'content_id', 'task_container_id', 'timestamp', 'prior_question_elapsed_time',
-                           'prior_question_had_explanation', 'part', 'answered_correctly']
+                           'prior_question_had_explanation', 'part', 'answered_correctly', 'te_content_id_by_answered_correctly',
+                           'answered_correctly_avg_u']
                 group = (trn_x[usecols]
                          .groupby('user_id')
                          .apply(lambda r: (r['content_id'].values,
                                            r['answered_correctly'].values,
-                                           r['task_container_id'].values,
                                            r['timestamp'].values,
                                            r['prior_question_elapsed_time'].values,
                                            r['prior_question_had_explanation'].values,
-                                           r['part'].values)))
+                                           r['part'].values,
+                                           r['te_content_id_by_answered_correctly'].values,
+                                           r['answered_correctly_avg_u'].values)))
 
                 train_loader = factory.get_transformer_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
                 valid_loader = factory.get_transformer_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)

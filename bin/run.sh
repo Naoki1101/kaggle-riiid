@@ -80,7 +80,8 @@ cd ../src
 # python train_nn.py -m 'transformer_017' -c 'saint_v5, add prior_exp'
 # python train_nn.py -m 'transformer_018' -c '017, SmoothBCEwLogits'
 # python train_nn.py -m 'transformer_019' -c '017, num_en=3'
-python train_nn.py -m 'transformer_020' -c 'saint_v5, add task_container_id'
+# python train_nn.py -m 'transformer_020' -c 'saint_v5, add task_container_id'
+python train_nn.py -m 'transformer_021' -c 'saint_v7, add numerical'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'

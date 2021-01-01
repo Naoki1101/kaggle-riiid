@@ -63,7 +63,15 @@ def main():
 
         train_df['prior_question_had_explanation'] = train_df['prior_question_had_explanation'].astype(float)
 
-        # train_df['user_count'] = train_df.groupby('user_id').cumcount()
+        te_content_df = pd.read_feather('../features/te_content_id_by_answered_correctly_train.feather')
+        avg_u_target_df = pd.read_feather('../features/answered_correctly_avg_u_train.feather')
+
+        if cfg.common.debug:
+            te_content_df = te_content_df.iloc[:10**6]
+            avg_u_target_df = avg_u_target_df.iloc[:10**6]
+
+        train_df['te_content_id_by_answered_correctly'] = te_content_df['te_content_id_by_answered_correctly']
+        train_df['answered_correctly_avg_u'] = avg_u_target_df['answered_correctly_avg_u']
 
     with t.timer('make folds'):
         valid_idx = np.load('../data/processed/cv1_valid.npy')

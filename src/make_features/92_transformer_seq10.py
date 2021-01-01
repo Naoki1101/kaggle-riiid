@@ -13,7 +13,7 @@ MAX_SEQ = 121
 usecols = ['row_id', 'user_id', 'content_id', 'timestamp',
            'prior_question_elapsed_time', 'prior_question_had_explanation',
            'part', 'answered_correctly', 'te_content_id_by_answered_correctly',
-           'answered_correctly_avg_u_', 'is_val']
+           'answered_correctly_avg_u', 'is_val']
 
 
 def add_user_feats(df, user_content_dict, user_timestamp_dict, user_prior_elapsed_dict,
