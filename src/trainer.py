@@ -140,7 +140,7 @@ class NNTrainer:
                                            r['te_content_id_by_answered_correctly'].values,
                                            r['answered_correctly_avg_u'].values)))
 
-                train_loader = factory.get_transformer_dataloader(samples=group, df=None, cfg=self.cfg.data.train)
+                train_loader = factory.get_transformer_dataloader(samples=group, df=trn_x, cfg=self.cfg.data.train)
                 valid_loader = factory.get_transformer_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)
             else:
                 train_loader = factory.get_dataloader(trn_x, self.cfg.data.train)

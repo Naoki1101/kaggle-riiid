@@ -53,10 +53,11 @@ def main():
 
     with t.timer('load data'):
         if cfg.common.debug:
-            train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE, nrows=10**6)
+            train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE, nrows=5_000_000)
         else:
             train_df = pd.read_csv(const.INPUT_DATA_DIR / 'train.csv', dtype=const.DTYPE)
 
+    with t.timer('preprocess'):
         questions_df = pd.read_csv(const.INPUT_DATA_DIR / 'questions.csv')
         q2p = dict(questions_df[['question_id', 'part']].values)
         train_df['part'] = train_df['content_id'].map(q2p)
@@ -67,8 +68,8 @@ def main():
         avg_u_target_df = pd.read_feather('../features/answered_correctly_avg_u_train.feather')
 
         if cfg.common.debug:
-            te_content_df = te_content_df.iloc[:10**6]
-            avg_u_target_df = avg_u_target_df.iloc[:10**6]
+            te_content_df = te_content_df.iloc[:5_000_000]
+            avg_u_target_df = avg_u_target_df.iloc[:5_000_000]
 
         train_df['te_content_id_by_answered_correctly'] = te_content_df['te_content_id_by_answered_correctly']
         train_df['answered_correctly_avg_u'] = avg_u_target_df['answered_correctly_avg_u']
@@ -89,6 +90,9 @@ def main():
                 drop_idx = drop_idx[np.where(drop_idx < len(train_df))]
             train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
+
+        train_df['step'] = train_df.groupby('user_id').cumcount() // 300   # 300はテキトー
+        train_df['user_step_id'] = train_df['user_id'].astype(str) + '__' + train_df['step'].astype(str)
 
     with t.timer('train model'):
         trainer = NNTrainer(run_name, fold_df, cfg)
