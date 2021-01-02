@@ -91,7 +91,7 @@ def main():
             train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
-        train_df['step'] = train_df.groupby('user_id').cumcount() // 300   # 300はテキトー
+        train_df['step'] = train_df.groupby('user_id').cumcount() // 200
         train_df['user_step_id'] = train_df['user_id'].astype(str) + '__' + train_df['step'].astype(str)
 
     with t.timer('train model'):

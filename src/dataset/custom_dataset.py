@@ -1308,9 +1308,9 @@ class CustomTrainDataset9(Dataset):
         user_id, step_id = list(map(int, user_step_id.split('__')))
 
         q_, qa_, qt_, qe_, qx_, qp_, qte_, qu_ = self.samples[user_id]
-        step_start, step_end = step_id * 300, (step_id + 1) * 300
-        if step_id > 0 and len(q_[step_start: step_end]) < 300:
-            step_start = (step_id - 1) * 300
+        step_start, step_end = step_id * 200, (step_id + 1) * 200
+        if step_id > 0 and len(q_[step_start: step_end]) < 200:
+            step_start = (step_id - 1) * 200
 
         q_ = q_[step_start: step_end]
         qa_ = qa_[step_start: step_end]
