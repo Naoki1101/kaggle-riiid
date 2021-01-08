@@ -84,7 +84,10 @@ cd ../src
 # python train_nn.py -m 'transformer_021' -c 'saint_v7, add numerical'
 # python train_nn.py -m 'transformer_022' -c 'saint_v7, each user_step_id, step_size=200'
 # python train_nn.py -m 'transformer_023' -c 'saint_v7, use latest target'
-python train_nn.py -m 'transformer_024' -c 'saint_v7, step_size=150'
+# python train_nn.py -m 'transformer_024' -c 'saint_v7, faster'
+# python train_nn.py -m 'transformer_025' -c 'saint_v7, batch_size=512'
+# python train_nn.py -m 'transformer_026' -c 'saint_v8, len(q) >= 10'
+python train_nn.py -m 'transformer_027' -c 'saint_v8, num_fc_out_dim=64'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'

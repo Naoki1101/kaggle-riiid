@@ -120,7 +120,7 @@ def main():
                                   params=notify_params)
         notificator.send_line()
         notificator.send_notion()
-        notificator.send_slack()
+        # notificator.send_slack()
 
     with t.timer('git'):
         git = Git(run_name=run_name_cv)
