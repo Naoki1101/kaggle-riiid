@@ -4,8 +4,8 @@ import layer
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 
-from . import (mlp, tabnet, transformer, saint, saint_v2, saint_v3,
-               saint_v4, saint_v5, saint_v6, saint_v7, saint_v8)
+from . import (mlp, tabnet, transformer, saint, saint_v2, saint_v3, saint_v4, saint_v5,
+               saint_v6, saint_v7, saint_v8, saint_v9, saint_v10, saint_v11)
 
 sys.path.append('../src')
 
@@ -24,6 +24,9 @@ model_encoder = {
     'transformer_saint_v6': saint_v6.SAINT,
     'transformer_saint_v7': saint_v7.SAINT,
     'transformer_saint_v8': saint_v8.SAINT,
+    'transformer_saint_v9': saint_v9.SAINT,
+    'transformer_saint_v10': saint_v10.SAINT,
+    'transformer_saint_v11': saint_v11.SAINT,
 }
 
 

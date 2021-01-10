@@ -87,7 +87,7 @@ cd ../src
 # python train_nn.py -m 'transformer_024' -c 'saint_v7, faster'
 # python train_nn.py -m 'transformer_025' -c 'saint_v7, batch_size=512'
 # python train_nn.py -m 'transformer_026' -c 'saint_v8, len(q) >= 10'
-python train_nn.py -m 'transformer_027' -c 'saint_v8, num_fc_out_dim=64'
+# python train_nn.py -m 'transformer_027' -c 'saint_v8, num_fc_out_dim=64'
 
 # python train_nn_team.py -m 'mlp_001' -c 'test'
 # python train_nn_team.py -m 'mlp_002' -c 'custom_512, epoch=30'
@@ -114,3 +114,12 @@ python train_nn.py -m 'transformer_027' -c 'saint_v8, num_fc_out_dim=64'
 # python ensemble_team.py -m 'ensemble_003' -c 'cb x1, mlp x1'
 # python ensemble_team.py -m 'ensemble_004' -c 'cb x1, mlp x1'
 # python ensemble_team.py -m 'ensemble_005' -c 'cb x1, mlp x1'
+
+
+# ======================================================
+# REVIEW
+# ======================================================
+# python train_nn.py -m 'transformer_028' -c 'saint_v9'
+# python train_nn.py -m 'transformer_029' -c 'saint_v10'
+python train_nn.py -m 'transformer_030' -c 'saint_v10, seq_len=200, step_size=230'
+# python train_nn.py -m 'transformer_031' -c 'saint_v11, seq_len=200, step_size=230'

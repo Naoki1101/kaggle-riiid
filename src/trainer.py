@@ -135,10 +135,9 @@ class NNTrainer:
                                            r['answered_correctly'].values,
                                            r['timestamp'].values,
                                            r['prior_question_elapsed_time'].values,
-                                           r['prior_question_had_explanation'].values,
                                            r['part'].values,
                                            r['te_content_id_by_answered_correctly'].values,
-                                           r['answered_correctly_avg_u'].values)))
+                                           r['task_container_id'].values)))
 
                 train_loader = factory.get_transformer_dataloader(samples=group, df=trn_x, cfg=self.cfg.data.train)
                 valid_loader = factory.get_transformer_dataloader(samples=group, df=val_x, cfg=self.cfg.data.valid)

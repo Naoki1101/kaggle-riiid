@@ -75,7 +75,7 @@ def main():
         train_df['answered_correctly_avg_u'] = avg_u_target_df['answered_correctly_avg_u']
 
     with t.timer('make folds'):
-        valid_idx = np.load('../data/processed/cv1_valid.npy')
+        valid_idx = np.load('../data/processed/cv1_valid_v2.npy')
         if cfg.common.debug:
             valid_idx = valid_idx[np.where(valid_idx < len(train_df))]
 
@@ -91,7 +91,7 @@ def main():
             train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
             fold_df = fold_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
-        train_df['step'] = train_df.groupby('user_id').cumcount() // 200
+        train_df['step'] = train_df.groupby('user_id').cumcount() // cfg.data.train.step_size
         train_df['user_step_id'] = train_df['user_id'].astype(str) + '__' + train_df['step'].astype(str)
 
     with t.timer('train model'):
