@@ -121,5 +121,8 @@ cd ../src
 # ======================================================
 # python train_nn.py -m 'transformer_028' -c 'saint_v9'
 # python train_nn.py -m 'transformer_029' -c 'saint_v10'
-python train_nn.py -m 'transformer_030' -c 'saint_v10, seq_len=200, step_size=230'
+# python train_nn.py -m 'transformer_030' -c 'saint_v10, seq_len=200, step_size=230'
 # python train_nn.py -m 'transformer_031' -c 'saint_v11, seq_len=200, step_size=230'
+# python train_nn.py -m 'transformer_032' -c 'saint_v12, seq_len=200, step_size=230, task_mask'
+# python train_nn.py -m 'transformer_033' -c 'saint_v13, seq_len=200, step_size=230, ohe'
+python train_nn.py -m 'transformer_034' -c 'saint_v14, seq_len=200, step_size=230, rm position'
